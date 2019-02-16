@@ -1,3 +1,4 @@
+#Originally from PSORLAB/EAGO.jl on GitHub
 # Defines functions required for linear algebra packages
 one(x::MC{N}) where N = MC{N}(1.0,1.0,IntervalConstr(1.0),zeros(SVector{N,Float64}),zeros(SVector{N,Float64}),x.cnst)
 zero(x::MC{N}) where N = MC{N}(0.0,0.0,IntervalConstr(0.0),zeros(SVector{N,Float64}),zeros(SVector{N,Float64}),x.cnst)
