@@ -1,4 +1,1 @@
-UCONN PSOR Lab - Matthew Stuber
-McCormick Linear Algebra Library for EAGO - Matthew Wilhelm, Michael Castelpoggi
-This is a library to house the McCormick math operators implemented in the 
-style of BLAS/LAPACK.
+
