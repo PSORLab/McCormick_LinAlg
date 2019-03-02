@@ -5,7 +5,6 @@ uuid = "2c8490f9-01a1-5bb6-8196-ba823f81ed05"
 EAGO = "bb8be931-2a91-5aca-9f87-79e1cb69959a"
 
 [extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
 
 [targets]
-test = ["Test"]
