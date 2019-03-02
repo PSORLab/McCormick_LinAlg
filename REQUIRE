@@ -1,0 +1,6 @@
+IntervalArithmetic 0.15+
+IntervalContractors 0.3+
+BenchmarkTools
+BandedMatrices 0.8.0+
+Reexport 0.2.0
+StaticArrays 0.8.3

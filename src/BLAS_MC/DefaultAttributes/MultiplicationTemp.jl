@@ -1,6 +1,7 @@
-##Originally from PSOR/EAGO.jl under 
-        #EAGO.jl/src/McCormick/OperatorLibrary/ForwardOperators/Multiplication.jl
 IntervalType########### Defines multiplicaiton of SMC and SMC
+##Originally from PSOR/EAGO.jl under
+        #EAGO.jl/src/McCormick/OperatorLibrary/ForwardOperators/Multiplication.jl
+#####This version should create as little MC objects as possible, and only return the fields of the resulting MC object
 function sigu(x::Float64,mu1T::Float64)
 	 (0.0<=x) ? x^(1.0/mu1T) : -abs(x)^(1.0/mu1T)
  end
@@ -1042,10 +1043,10 @@ function STD_NS_ALT(x::MC{N},y::MC{N}) where N
 	return MC{N}(cv,cc,Intv,cv_grad,cc_grad,(x.cnst && y.cnst))
 end
 
-function *(x1::MC{N},x2::MC{N}) where N
+function multtemp(x1::MC{N},x2::MC{N}) where N
 	if x1 == x2
 		#println("sqr trace")
-		return sqr(x1)
+		return sqrtemp(x1)
 	end
 
 	degen1 = ((x1.Intv.hi - x1.Intv.lo) == 0.0)

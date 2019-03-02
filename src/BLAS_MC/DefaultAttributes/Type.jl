@@ -1,3 +1,5 @@
+##Originally from PSOR/EAGO.jl
+
 #abstract type AbstractMC <: Real end
 """
     MC
