@@ -14,11 +14,11 @@ module McCormick_LinAlg
 =#
     #Load Package EAGO xEwhJ version commented out for just McCormick.jl
     using EAGO
-    
+
 #=    include("BLAS_MC/BLAS_MC.jl")
     using .BLAS_MC
 
 Just include files individually for now, under this one module no REEXPORT =#
-    incude("BLAS_MC/Lin_Functions/DOT.jl")
-    incude("BLAS_MC/Lin_Functions/XSCAL.jl")
+    include("BLAS_MC/Lin_Functions/DOT.jl")
+    include("BLAS_MC/Lin_Functions/XSCAL.jl")
 end
