@@ -3,9 +3,9 @@ module Check_BLAS_MC
     using Compat
     using Compat.Test
 
-    using McCormick_LinAlg, StaticArrays, IntervalArithmetic
+    using McCormick_LinAlg
     #using...
 
-    include("scalar_routines.jl")
-    include("dotproduct.jl")
+#    include("dotproduct.jl")
+    include("xscal.jl")
 end
