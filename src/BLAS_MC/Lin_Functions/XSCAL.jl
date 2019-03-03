@@ -34,8 +34,8 @@ function XSCAL(MCv::SVector, scal::Float64)#where A<:AbstractArray #MC = single 
                             cv = scal * x.cc
                             cnst = x.cnst
                             for ip in range(1, N)
-                                            global cc_grad[ip] = scal * MC.cv_grad[ip]
-                                            global cv_grad[ip] = scal * MC.cc_grad[ip]
+                                            global cc_grad[ip] = scal * x.cv_grad[ip]
+                                            global cv_grad[ip] = scal * x.cc_grad[ip]
                             end
                             global MCvtemp[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
                     end
