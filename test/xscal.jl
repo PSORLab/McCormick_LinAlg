@@ -5,9 +5,9 @@
 #mctol = 1E-4
 #= m = MC{2}(2.0, 3.0, IntervalType(1.0,4.0),
              seed_gradient(Float64,1,2), seed_gradient(Float64,1,2), false) =#
-m = MC{3}(4.0, 5.0, IntervalType(4,5), SVector{3,Float64}([4.0, 5.0, 6.0]), SVector{3,Float64}([3.0, 2.0, 1.0]), false)
+m = SVector{1,MC}(MC{3}(4.0, 5.0, IntervalType(4,5), SVector{3,Float64}([4.0, 5.0, 6.0]), SVector{3,Float64}([3.0, 2.0, 1.0]), false))
 
-y = XSCAL(m, 2.0)
+y = XSCAL(m, 2.0)[1]
 yref = MC{3}(8.0, 10.0, IntervalType(8,10), SVector{3,Float64}([8.0, 10.0, 6.0]), SVector{3,Float64}([6.0, 4.0, 2.0]), false)
 
 @test y.cv == yref.cv
