@@ -1,7 +1,7 @@
 #@test lines for XSCAL etc
 #Meant to be the easiest test file to make
 @testset "Test XSCAL" begin
-    using McCormick_LinAlg, StaticArrays
+
 #mctol = 1E-4
 #= m = MC{2}(2.0, 3.0, IntervalType(1.0,4.0),
              seed_gradient(Float64,1,2), seed_gradient(Float64,1,2), false) =#
