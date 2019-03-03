@@ -19,6 +19,7 @@ module McCormick_LinAlg
     using .BLAS_MC
 
 Just include files individually for now, under this one module no REEXPORT =#
-    include("BLAS_MC/Lin_Functions/DOT.jl")
+    #include("BLAS_MC/Lin_Functions/DOT.jl")
+    using StaticArrays #should be redundant
     include("BLAS_MC/Lin_Functions/XSCAL.jl")
 end
