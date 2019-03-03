@@ -14,7 +14,7 @@ module McCormick_LinAlg
 =#
     #Load Package EAGO xEwhJ version commented out for just McCormick.jl
     using EAGO
-    export XSCAL, 
+    export XSCAL
 #=    include("BLAS_MC/BLAS_MC.jl")
     using .BLAS_MC
 
