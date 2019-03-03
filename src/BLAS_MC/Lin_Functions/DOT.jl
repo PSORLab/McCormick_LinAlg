@@ -2,22 +2,14 @@
 
 #Haven't included strided vectors yet, more important on matrix functions
 #::SVector{n, MC{N}}
-function DOT(X::SVector{n,MC{N}},Y::SVector{n,MC{N}}) where N <: Integer where n <:Integer#x,y E(Vector(MC{N})) where N <: Integer
+function DOT(X::Vector{MC{N}}(undef, n),Y::Vector{MC{N}}(undef, n)) where N <: Integer where n <:Integer#x,y E(Vector(MC{N})) where N <: Integer
     cum_cc::Float64 = 0.0
     cum_cv::Float64 = 0.0
     cum_hi::Float64 = 0.0
     cum_lo::Float64 = 0.0
-    cum_ccgrad::MVector{N,Float64} = 0.0
-    cum_cvgrad::SVector{N,Float64} = 0.0
+    cum_ccgrad::Vector{N,Float64} =
+    cum_cvgrad::Vector{N,Float64} = 0.0
     cum_const::Bool = 1
-
-    temp_cc1::Float64 = 0.0
-    temp_cv1::Float64 = 0.0
-    temp_hi1::Float64 = 0.0
-    temp_lo1::Float64 = 0.0
-    temp_ccgrad1::SVector{N,Float64} = 0.0
-    temp_cvgrad1::SVector{N,Float64} = 0.0
-    temp_const::Bool = 1
 
     m::Integer = mod(n,5)
     if m != 0
@@ -34,14 +26,14 @@ function DOT(X::SVector{n,MC{N}},Y::SVector{n,MC{N}}) where N <: Integer where n
             cum_const = (cum_const && temp[6])
             =#
             #Still passing MC{N}'s
-            temp::MC{N} = melttemp(X[i], Y[i])
-            cum_cv += MC.cv
-            cum_cc += MC.cc
-            cum_hi += MC.Intv.hi
-            cum_lo += MC.Intv.lo
-            cum_cvgrad[:] += MC.cv_grad
-            cum_ccgrad += MC.cc_grad
-            cum_const = (cum_const && MC.const)
+            temp::MC{N} = multtemp(X[i], Y[i])
+            cum_cv += temp.cv
+            cum_cc += temp.cc
+            cum_hi += temp.Intv.hi
+            cum_lo += temp.Intv.lo
+            cum_cvgrad += temp.cv_grad #Vector += SVector
+            cum_ccgrad += temp.cc_grad
+            cum_const = (cum_const && temp.const)
         end
         #now continue in series of 5 up to i = n-m+1 , m from mod(n,m)
         for i in (m+1):5:n
@@ -75,7 +67,7 @@ function DOT(X::SVector{n,MC{N}},Y::SVector{n,MC{N}}) where N <: Integer where n
            cum_const = (cum_const && temp1.const && temp2.const && temp3.const && temp4.const && temp5.const)
        end
 
-    result = MC{N}(cum_cc, cum_cv, Interval(cum_lo, cum_hi), cum_cvgrad, cum_cvgrad, cum_const)#MCCormick Object
+    result = MC{N}(cum_cc, cum_cv, Interval(cum_lo, cum_hi), SVector{n}(cum_cvgrad), SVector{n}(cum_cvgrad), cum_const)#MCCormick Object
     return result
 end
 
