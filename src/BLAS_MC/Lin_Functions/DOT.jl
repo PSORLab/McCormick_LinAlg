@@ -2,14 +2,14 @@
 
 #Haven't included strided vectors yet, more important on matrix functions
 #::SVector{n, MC{N}}
-function DOT(X::SVector{MC},Y::SVector{MC}) #x,y E(Vector(MC{N})) where N <: Integer
+function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
     n = length(X)
     N = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
     cum_cv::Float64 = 0.0
     cum_hi::Float64 = 0.0
     cum_lo::Float64 = 0.0
-    cum_ccgrad::Vector{N,Float64} =
+    cum_ccgrad::Vector{N,Float64} = 0.0
     cum_cvgrad::Vector{N,Float64} = 0.0
     cum_const::Bool = 1
 
@@ -28,14 +28,14 @@ function DOT(X::SVector{MC},Y::SVector{MC}) #x,y E(Vector(MC{N})) where N <: Int
             cum_const = (cum_const && temp[6])
             =#
             #Still passing MC{N}'s
-            temp::MC{N} = multtemp(X[i], Y[i])
-            cum_cv += temp.cv
-            cum_cc += temp.cc
-            cum_hi += temp.Intv.hi
-            cum_lo += temp.Intv.lo
-            cum_cvgrad += temp.cv_grad #Vector += SVector
-            cum_ccgrad += temp.cc_grad
-            cum_const = (cum_const && temp.const)
+            temp = multtemp(X[i], Y[i])
+            global cum_cv += temp.cv
+            global cum_cc += temp.cc
+            global cum_hi += temp.Intv.hi
+            global cum_lo += temp.Intv.lo
+            global cum_cvgrad += temp.cv_grad #Vector += SVector
+            global cum_ccgrad += temp.cc_grad
+            global cum_const = (cum_const && temp.const)
         end
         #now continue in series of 5 up to i = n-m+1 , m from mod(n,m)
         for i in (m+1):5:n
@@ -55,21 +55,21 @@ function DOT(X::SVector{MC},Y::SVector{MC}) #x,y E(Vector(MC{N})) where N <: Int
            cum_const = (cum_const && temp1[6] && temp2[6] && temp3[6] && temp4[6] && temp5[6])
            =#
            #Still passing MC{N}'s
-           temp1::MC{N} = multtemp(X[i], Y[i])
-           temp2::MC{N} = multtemp(X[i+1], Y[i+1])
-           temp3::MC{N} = multtemp(X[i+2], Y[i+2])
-           temp4::MC{N} = multtemp(X[i+3], Y[i+3])
-           temp5::MC{N} = multtemp(X[i+4], Y[i+4])
-           cum_cv += temp1.cv +temp2.cv +temp3.cv +temp4.cv +temp5.cv
-           cum_cc += temp1.cc +temp2.cc +temp3.cc +temp4.cc +temp5.cc
-           cum_hi += temp1.Intv.hi +temp2.Intv.hi +temp3.Intv.hi +temp4.Intv.hi +temp5.Intv.hi
-           cum_lo += temp1.Intv.lo +temp2.Intv.lo +temp3.Intv.lo +temp4.Intv.lo +temp5.Intv.lo
-           cum_cvgrad += temp1.cv_grad +temp2.cv_grad +temp3.cv_grad +temp4.cv_grad +temp5.cv_grad
-           cum_ccgrad += temp1.cc_grad +temp2.cc_grad +temp3.cc_grad +temp4.cc_grad +temp5.cc_grad
-           cum_const = (cum_const && temp1.const && temp2.const && temp3.const && temp4.const && temp5.const)
+           temp1 = multtemp(X[i], Y[i])
+           temp2 = multtemp(X[i+1], Y[i+1])
+           temp3 = multtemp(X[i+2], Y[i+2])
+           temp4 = multtemp(X[i+3], Y[i+3])
+           temp5 = multtemp(X[i+4], Y[i+4])
+           global cum_cv += temp1.cv +temp2.cv +temp3.cv +temp4.cv +temp5.cv
+           global cum_cc += temp1.cc +temp2.cc +temp3.cc +temp4.cc +temp5.cc
+           global cum_hi += temp1.Intv.hi +temp2.Intv.hi +temp3.Intv.hi +temp4.Intv.hi +temp5.Intv.hi
+           global cum_lo += temp1.Intv.lo +temp2.Intv.lo +temp3.Intv.lo +temp4.Intv.lo +temp5.Intv.lo
+           global cum_cvgrad += temp1.cv_grad +temp2.cv_grad +temp3.cv_grad +temp4.cv_grad +temp5.cv_grad
+           global cum_ccgrad += temp1.cc_grad +temp2.cc_grad +temp3.cc_grad +temp4.cc_grad +temp5.cc_grad
+           global cum_const = (cum_const && temp1.const && temp2.const && temp3.const && temp4.const && temp5.const)
        end
 
-    result = MC{N}(cum_cc, cum_cv, Interval(cum_lo, cum_hi), SVector{n}(cum_cvgrad), SVector{n}(cum_cvgrad), cum_const)#MCCormick Object
+    result = MC{N}(cum_cc, cum_cv, Interval(cum_lo, cum_hi), SVector{n,Float64}(cum_cvgrad), SVector{n,Float64}(cum_cvgrad), cum_const)#MCCormick Object
     return result
 end
 
