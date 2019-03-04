@@ -9,6 +9,6 @@ module Check_BLAS_MC
 
     #using...
 
-#    include("dotproduct.jl")
+    include("dotproduct.jl")
     include("xscal.jl")
 end
