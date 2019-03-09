@@ -23,7 +23,7 @@ function SAXPY(scal::Float64, X::SVector, Y::SVector)#where A<:AbstractArray #MC
                                         global cc_grad[ip] = scal * x.cc_grad[ip] + y.cc_grad[ip]
                                         global cv_grad[ip] = scal * x.cv_grad[ip] + y.cv_grad[ip]
                             end
-                            global Z[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
+                            global R[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
                     end
         else
                     for i in range(1,n)
@@ -38,8 +38,8 @@ function SAXPY(scal::Float64, X::SVector, Y::SVector)#where A<:AbstractArray #MC
                                             global cc_grad[ip] = scal * x.cv_grad[ip] + y.cc_grad[ip]
                                             global cv_grad[ip] = scal * x.cc_grad[ip] + y.cv_grad[ip]
                             end
-                            global Z[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
+                            global R[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
                     end
         end
-        return SVector{n, MC}(Z)
+        return SVector{n, MC}(R)
 end

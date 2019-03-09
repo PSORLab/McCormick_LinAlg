@@ -1,1 +1,5 @@
 EAGO 0.1.2
+Compat
+BenchmarkTools
+LinearAlgebra
+StaticArrays
