@@ -3,7 +3,7 @@ module EfficiencyTest
     using Compat
     using Compat.Test
     using BenchmarkTools
-    import BenchmarkTools.mean
+    import BenchmarkTools.minimum
     using StaticArrays
     using EAGO #Should be dependent in LinAlg So idk why MC not defined
     using McCormick_LinAlg
@@ -13,10 +13,10 @@ module EfficiencyTest
 #Efficient Functions
 
 #Simple Implementations of each function
-    include("SimpleFunction/simpledot.jl")
-    include("SimpleFunction/simplexscal.jl")
-    include("SimpleFunction/simplesaxpy.jl")
-    include("SimpleFunction/simplexnrm2.jl")
+    include("SimpleFunctions/simpledot.jl")
+    include("SimpleFunctions/simplexscal.jl")
+    include("SimpleFunctions/simplesaxpy.jl")
+    include("SimpleFunctions/simplexnrm2.jl")
 
     G = BenchmarkGroup()
     G["opt"] = BenchmarkGroup(["optimized", "BLAS"])
@@ -36,9 +36,9 @@ module EfficiencyTest
     for b in [bdot, bsdot, bdsdot]
         tune!(b)
     end
-    [new, old1, old2] = [run(bdot), run(bsdot), run(bdsdot)]
-    judge(new, old1)
-    judge(new, old2)
+    new, old1, old2 = minimum(run(bdot)), minimum(run(bsdot)), minimum(run(bdsdot))
+    println(judge(new, old1))
+    println(judge(new, old2))
 
 #SAXPY
     println("SAXPY efficiency")
@@ -48,7 +48,7 @@ module EfficiencyTest
     m4= MC{3}(3.0, 4.0, IntervalType(3., 4.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     X = SVector{2,MC}(m1,m2)
     Y = SVector{2,MC}(m3, m4)
-    a::Float64 = 6.3
+    a = 6.3
 
     bsaxpy = @benchmarkable SAXPY(a, X, Y)
     bssaxpy = @benchmarkable simplesaxpy(a, X, Y)
@@ -56,23 +56,25 @@ module EfficiencyTest
     for b in [bsaxpy, bssaxpy, bdssaxpy]
         tune!(b)
     end
-    [new, old1, old2] = [run(bsaxpy), run(bssaxpy), run(bdssaxpy)]
-    judge(new, old1)
-    judge(new, old2)
+    new, old1, old2 = minimum(run(bsaxpy)), minimum(run(bssaxpy)), minimum(run(bdssaxpy))
+    println(judge(new, old1))
+    println(judge(new, old2))
 
 #XSCAL
     println("XSCAL efficiency")
-    X = MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    a::Float64 = 6.3
+    m1= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
+    m2= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
+    X = SVector{2,MC}(m1,m2)
+    a = 6.3
 
-    bxscal = @benchmarkable XSCAL(a, X)
-    bsxscal = @benchmarkable simplexscal(a, X)
-    bdsxscal = @benchmarkable deadsimplexscal(a, X)
+    bxscal = @benchmarkable XSCAL(X, a)
+    bsxscal = @benchmarkable simplexscal(X, a)
+    bdsxscal = @benchmarkable deadsimplexscal(X, a)
     for b in [bxscal, bsxscal, bdsxscal]
         tune!(b)
     end
-    [new, old1, old2] = [run(bxscal), run(bsxscal), run(bdsxscal)]
-    judge(new, old1)
-    judge(new, old2)
+    new, old1, old2 = minimum(run(bxscal)), minimum(run(bsxscal)), minimum(run(bdsxscal))
+    println(judge(new, old1))
+    println(judge(new, old2))
 
 end

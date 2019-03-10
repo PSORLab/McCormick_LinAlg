@@ -11,5 +11,5 @@ function simpledot(X::SVector,Y::SVector)
 end
 
 function deadsimpledot(X::SVector, Y::SVector)
-    Z = SUM(X .* Y)
+    Z = sum(X .* Y)
 end

@@ -1,9 +1,9 @@
 
 
-function simplexscal(a::Float64, X::SVector)
-    R::SVector = [a*x for x in X]
+function simplexscal(X::SVector, a::Float64)
+    R::SVector{length(X)} = [a*x for x in X]
 end
 
-function deadsimplexscal(a::Float64, X::SVector)
-    R::SVector = X*a
+function deadsimplexscal(X::SVector, a::Float64)
+    R::SVector{length(X)} = X*a
 end
