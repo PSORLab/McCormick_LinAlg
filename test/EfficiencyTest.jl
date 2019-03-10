@@ -7,8 +7,32 @@ module EfficiencyTest
     using StaticArrays
     using EAGO #Should be dependent in LinAlg So idk why MC not defined
     using McCormick_LinAlg
+    using Random
     #import McCormick_LinAlg.XSCAL #shouldnt be necessary with proper export
+#=
+With MC{N} where N=3
 
+DOT efficiency
+TrialJudgement(+107.76% => regression)
+TrialJudgement(+899.00% => regression)
+SAXPY efficiency
+TrialJudgement(-40.74% => improvement)
+TrialJudgement(+184.45% => regression)
+XSCAL efficiency
+TrialJudgement(+8.57% => regression)
+TrialJudgement(+1372.66% => regression)
+
+With N = 29
+DOT efficiency
+TrialJudgement(-27.36% => improvement)
+TrialJudgement(+366.67% => regression)
+SAXPY efficiency
+TrialJudgement(+223.16% => regression)
+TrialJudgement(+1179.23% => regression)
+XSCAL efficiency
+TrialJudgement(+1650.05% => regression)
+TrialJudgement(+2811.97% => regression)
+=#
     #using...
 #Efficient Functions
 
@@ -21,18 +45,27 @@ module EfficiencyTest
     G = BenchmarkGroup()
     G["opt"] = BenchmarkGroup(["optimized", "BLAS"])
     G["bench"] = BenchmarkGroup(["ineffifient", "slow", "simple"])
-#DOT
-    println("DOT efficiency")
+
     m1 = MC{3}(4.0, 5.0, IntervalType(4,4), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     m2 = MC{3}(3.2,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
-    mv1 = SVector{2,MC}(m1,m2)
     m3 = MC{3}(4.0, 5.0, IntervalType(4, 5), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
     m4 = MC{3}(3.0, 4.0, IntervalType(3, 4), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    mv2 = SVector{2,MC}(m3,m4)
+    a = 6.3
 
-    bdot = @benchmarkable DOT($mv1, $mv2)
-    bsdot = @benchmarkable simpledot($mv1, $mv2)
-    bdsdot = @benchmarkable deadsimpledot($mv1, $mv2)
+    M = (m1,m2,m3,m4)
+    Random.seed!(0)
+    n = 29 #Vector Size for all testing
+    ind = rand(1:4, n*2)
+    X = SVector{n,MC}(map(x -> M[x], ind[1:n]))
+    Y = SVector{n, MC}(map(x -> M[x], ind[n+1:2n]))
+
+
+#DOT
+    println("DOT efficiency")
+
+    bdot = @benchmarkable DOT($X, $Y)
+    bsdot = @benchmarkable simpledot($X, $Y)
+    bdsdot = @benchmarkable deadsimpledot($X, $Y)
     for b in [bdot, bsdot, bdsdot]
         tune!(b)
     end
@@ -42,17 +75,10 @@ module EfficiencyTest
 
 #SAXPY
     println("SAXPY efficiency")
-    m1= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    m2= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    m3= MC{3}(4.0, 5.0, IntervalType(4., 5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
-    m4= MC{3}(3.0, 4.0, IntervalType(3., 4.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    X = SVector{2,MC}(m1,m2)
-    Y = SVector{2,MC}(m3, m4)
-    a = 6.3
 
-    bsaxpy = @benchmarkable SAXPY(a, X, Y)
-    bssaxpy = @benchmarkable simplesaxpy(a, X, Y)
-    bdssaxpy = @benchmarkable deadsimplesaxpy(a, X, Y)
+    bsaxpy = @benchmarkable SAXPY($a, $X, $Y)
+    bssaxpy = @benchmarkable simplesaxpy($a, $X, $Y)
+    bdssaxpy = @benchmarkable deadsimplesaxpy($a, $X, $Y)
     for b in [bsaxpy, bssaxpy, bdssaxpy]
         tune!(b)
     end
@@ -62,14 +88,10 @@ module EfficiencyTest
 
 #XSCAL
     println("XSCAL efficiency")
-    m1= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    m2= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    X = SVector{2,MC}(m1,m2)
-    a = 6.3
 
-    bxscal = @benchmarkable XSCAL(X, a)
-    bsxscal = @benchmarkable simplexscal(X, a)
-    bdsxscal = @benchmarkable deadsimplexscal(X, a)
+    bxscal = @benchmarkable XSCAL($X, $a)
+    bsxscal = @benchmarkable simplexscal($X, $a)
+    bdsxscal = @benchmarkable deadsimplexscal($X, $a)
     for b in [bxscal, bsxscal, bdsxscal]
         tune!(b)
     end
