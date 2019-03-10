@@ -12,14 +12,14 @@ function SAXPY(scal::Float64, X::SVector, Y::SVector)#where A<:AbstractArray #MC
     cnst::Bool = true
         if scal >= 0
                     for i in range(1,n)
-                            x = X[i]
-                            y = Y[i]
+                            x::MC = X[i]
+                            y::MC = Y[i]
                             lo = scal * x.Intv.lo + y.Intv.lo
                             hi = scal * x.Intv.hi + y.Intv.hi
                             cc = scal * x.cc      + y.cc
                             cv = scal * x.cv      + y.cv
                             cnst = x.cnst && y.cnst
-                            for ip in range(1, N) #added length
+                            for ip in range(1, N) #added length. Do same 5peat here?
                                         global cc_grad[ip] = scal * x.cc_grad[ip] + y.cc_grad[ip]
                                         global cv_grad[ip] = scal * x.cv_grad[ip] + y.cv_grad[ip]
                             end
@@ -27,8 +27,8 @@ function SAXPY(scal::Float64, X::SVector, Y::SVector)#where A<:AbstractArray #MC
                     end
         else
                     for i in range(1,n)
-                            x = X[i]
-                            y = Y[i]
+                            x::MC = X[i]
+                            y::MC = Y[i]
                             lo = scal * x.Intv.hi + y.Intv.lo
                             hi = scal * x.Intv.lo + y.Intv.hi
                             cc = scal * x.cv      + y.cc

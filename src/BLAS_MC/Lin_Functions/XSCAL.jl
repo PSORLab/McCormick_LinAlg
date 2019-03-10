@@ -13,7 +13,7 @@ function XSCAL(MCv::SVector, scal::Float64)#where A<:AbstractArray #MC = single 
     cnst::Bool = true
         if scal >= 0
                     for i in range(1,n)
-                            x = MCv[i]
+                            x::MC = MCv[i]
                             lo = scal * x.Intv.lo
                             hi = scal * x.Intv.hi
                             cc = scal * x.cc
@@ -27,7 +27,7 @@ function XSCAL(MCv::SVector, scal::Float64)#where A<:AbstractArray #MC = single 
                     end
         else
                     for i in range(1,n)
-                            x = MCv[i]
+                            x::MC = MCv[i]
                             lo = scal * x.Intv.hi
                             hi = scal * x.Intv.lo
                             cc = scal * x.cv

@@ -54,7 +54,7 @@ TrialJudgement(+2811.97% => regression)
 
     M = (m1,m2,m3,m4)
     Random.seed!(0)
-    n = 29 #Vector Size for all testing
+    n = 50 #Vector Size for all testing
     ind = rand(1:4, n*2)
     X = SVector{n,MC}(map(x -> M[x], ind[1:n]))
     Y = SVector{n, MC}(map(x -> M[x], ind[n+1:2n]))

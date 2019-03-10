@@ -4,8 +4,8 @@
 #Haven't included strided vectors yet, more important on matrix functions
 #::SVector{n, MC{N}}
 function XNRM2(X::SVector) #x,y E(Vector(MC{N})) where N <: Integer
-    n = length(X)
-    N = length(X[1].cv_grad)
+    n::Int = length(X)
+    N::Int = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
     cum_cv::Float64 = 0.0
     cum_hi::Float64 = 0.0
@@ -31,7 +31,7 @@ function XNRM2(X::SVector) #x,y E(Vector(MC{N})) where N <: Integer
             cum_const = (cum_const && temp[6])
             =#
             #Still passing MC{N}'s
-            temp = X[i]^2 #Mult function needs more integration here
+            temp::MC = X[i]^2 #Mult function needs more integration here
             #temp = multtemp(X[i], Y[i])
             cum_cv += temp.cv
             cum_cc += temp.cc
@@ -60,11 +60,11 @@ function XNRM2(X::SVector) #x,y E(Vector(MC{N})) where N <: Integer
            cum_const = (cum_const && temp1[6] && temp2[6] && temp3[6] && temp4[6] && temp5[6])
            =#
            #Still passing MC{N}'s
-           temp1 = X[i]^2
-           temp2 = X[i+1]^2
-           temp3 = X[i+2]^2
-           temp4 = X[i+3]^2
-           temp5 = X[i+4]^2
+           temp1::MC = X[i]^2
+           temp2::MC = X[i+1]^2
+           temp3::MC = X[i+2]^2
+           temp4::MC = X[i+3]^2
+           temp5::MC = X[i+4]^2
            cum_cv += temp1.cv +temp2.cv +temp3.cv +temp4.cv +temp5.cv
            cum_cc += temp1.cc +temp2.cc +temp3.cc +temp4.cc +temp5.cc
            cum_hi += temp1.Intv.hi +temp2.Intv.hi +temp3.Intv.hi +temp4.Intv.hi +temp5.Intv.hi
@@ -74,7 +74,7 @@ function XNRM2(X::SVector) #x,y E(Vector(MC{N})) where N <: Integer
            cum_cnst = (cum_cnst && temp1.cnst && temp2.cnst && temp3.cnst && temp4.cnst && temp5.cnst)
        end
 
-    result = MC{N}(cum_cv, cum_cc, IntervalType(cum_lo, cum_hi), SVector{N,Float64}(cum_cvgrad), SVector{N,Float64}(cum_ccgrad), cum_cnst)#MCCormick Object
+    result::MC = MC{N}(cum_cv, cum_cc, IntervalType(cum_lo, cum_hi), SVector{N,Float64}(cum_cvgrad), SVector{N,Float64}(cum_ccgrad), cum_cnst)#MCCormick Object
     result = sqrt(result)  #May not be opt way to call this
     return result
 end

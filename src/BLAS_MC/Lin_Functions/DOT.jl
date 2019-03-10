@@ -30,7 +30,7 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
             cum_const = (cum_const && temp[6])
             =#
             #Still passing MC{N}'s
-            temp = *(X[i], Y[i]) #Mult function needs more integration here
+            temp::MC = *(X[i], Y[i]) #Mult function needs more integration here
             #temp = multtemp(X[i], Y[i])
             cum_cv += temp.cv
             cum_cc += temp.cc
@@ -59,11 +59,11 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
            cum_const = (cum_const && temp1[6] && temp2[6] && temp3[6] && temp4[6] && temp5[6])
            =#
            #Still passing MC{N}'s
-           temp1 = *(X[i], Y[i])
-           temp2 = *(X[i+1], Y[i+1])
-           temp3 = *(X[i+2], Y[i+2])
-           temp4 = *(X[i+3], Y[i+3])
-           temp5 = *(X[i+4], Y[i+4])
+           temp1::MC = *(X[i], Y[i])
+           temp2::MC = *(X[i+1], Y[i+1])
+           temp3::MC = *(X[i+2], Y[i+2])
+           temp4::MC = *(X[i+3], Y[i+3])
+           temp5::MC = *(X[i+4], Y[i+4])
            cum_cv += temp1.cv +temp2.cv +temp3.cv +temp4.cv +temp5.cv
            cum_cc += temp1.cc +temp2.cc +temp3.cc +temp4.cc +temp5.cc
            cum_hi += temp1.Intv.hi +temp2.Intv.hi +temp3.Intv.hi +temp4.Intv.hi +temp5.Intv.hi
