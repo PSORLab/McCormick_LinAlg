@@ -22,16 +22,16 @@ XSCAL efficiency
 TrialJudgement(+8.57% => regression)
 TrialJudgement(+1372.66% => regression)
 
-With N = 29
+With N = 50
 DOT efficiency
-TrialJudgement(-27.36% => improvement)
-TrialJudgement(+366.67% => regression)
+TrialJudgement(+41.81% => regression)
+TrialJudgement(+796.48% => regression)
 SAXPY efficiency
-TrialJudgement(+223.16% => regression)
-TrialJudgement(+1179.23% => regression)
+TrialJudgement(+197.74% => regression)
+TrialJudgement(+1215.94% => regression)
 XSCAL efficiency
-TrialJudgement(+1650.05% => regression)
-TrialJudgement(+2811.97% => regression)
+TrialJudgement(+2328.73% => regression)
+TrialJudgement(+3137.82% => regression)
 =#
     #using...
 #Efficient Functions

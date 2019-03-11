@@ -68,9 +68,9 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
            cum_cc += temp1.cc +temp2.cc +temp3.cc +temp4.cc +temp5.cc
            cum_hi += temp1.Intv.hi +temp2.Intv.hi +temp3.Intv.hi +temp4.Intv.hi +temp5.Intv.hi
            cum_lo += temp1.Intv.lo +temp2.Intv.lo +temp3.Intv.lo +temp4.Intv.lo +temp5.Intv.lo
-           cum_cvgrad += temp1.cv_grad +temp2.cv_grad +temp3.cv_grad +temp4.cv_grad +temp5.cv_grad
-           cum_ccgrad += temp1.cc_grad +temp2.cc_grad +temp3.cc_grad +temp4.cc_grad +temp5.cc_grad
-           cum_cnst = (cum_cnst && temp1.cnst && temp2.cnst && temp3.cnst && temp4.cnst && temp5.cnst)
+           cum_cvgrad += temp1.cv_grad +temp2.cv_grad +temp3.cv_grad +temp4.cv_grad +temp5.cv_grad#compare [:], .+=, +=
+           cum_ccgrad += temp1.cc_grad +temp2.cc_grad +temp3.cc_grad +temp4.cc_grad +temp5.cc_grad#print pointers and make sure they dont change
+           cum_cnst = (cum_cnst && temp1.cnst && temp2.cnst && temp3.cnst && temp4.cnst && temp5.cnst)#ex this probably changes
        end
 
     result = MC{N}(cum_cv, cum_cc, IntervalType(cum_lo, cum_hi), SVector{N,Float64}(cum_cvgrad), SVector{N,Float64}(cum_ccgrad), cum_cnst)#MCCormick Object
