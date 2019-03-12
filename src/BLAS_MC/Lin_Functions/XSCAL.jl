@@ -1,7 +1,7 @@
 #Scalar multiplication of vector containing McCormick Objects
 #MC{cc,cv,Intv,cc_grad,cv_grad,cnst}
 #Implementation first found in Mitsos2009 (not full citation)
-function XSCAL(MCv::Vector, scal::Float64)#where A<:AbstractArray #MC = single MC object, scal = Float64
+function XSCAL(MCv::Array{MC{N},1}, scal::Float64) where N #where A<:AbstractArray #MC = single MC object, scal = Float64
     N::Int = length(MCv[1].cc_grad)
     n::Int = length(MCv)
     MCvtemp = Vector{MC}(undef, n)

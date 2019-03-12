@@ -2,7 +2,7 @@
 
 #Haven't included strided vectors yet, more important on matrix functions
 #::SVector{n, MC{N}}
-function DOT(X::Vector{MC},Y::Vector{MC}) #x,y E(Vector(MC{N})) where N <: Integer
+function DOT(X::Array{MC{N},1},Y::Array{MC{N},1}) where N #x,y E(Vector(MC{N})) where N <: Integer
     n = length(X)
     N = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
@@ -44,7 +44,7 @@ function DOT(X::Vector{MC},Y::Vector{MC}) #x,y E(Vector(MC{N})) where N <: Integ
             cum_lo += temp1.Intv.lo
             cum_cvgrad += temp1.cv_grad #Vector += SVector
             cum_ccgrad += temp1.cc_grad
-            cum_cnst = (cum_cnst && temp.cnst) #pointer?
+            cum_cnst = (cum_cnst && temp1.cnst) #pointer?
         end
     end
         #now continue in series of 5 up to i = n-m+1 , m from mod(n,m)

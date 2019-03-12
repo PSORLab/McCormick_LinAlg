@@ -3,7 +3,7 @@
 
 #Haven't included strided vectors yet, more important on matrix functions
 #::SVector{n, MC{N}}
-function XNRM2(X::Vector) #x,y E(Vector(MC{N})) where N <: Integer
+function XNRM2(X::Array{MC{N},1}) where N #x,y E(Vector(MC{N})) where N <: Integer
     n::Int = length(X)
     N::Int = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
