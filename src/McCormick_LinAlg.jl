@@ -25,4 +25,12 @@ Just include files individually for now, under this one module no REEXPORT =#
     include("BLAS_MC/Lin_Functions/XSCAL.jl")
     include("BLAS_MC/Lin_Functions/XNRM2.jl")
     include("BLAS_MC/Lin_Functions/SAXPY.jl")
+
+    function testcorrectness()
+        include("../test/BLAS_MCtest.jl")
+    end
+    function testefficiency()
+        include("../test/EfficiencyTest")
+    end
+
 end
