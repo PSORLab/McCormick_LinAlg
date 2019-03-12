@@ -2,7 +2,7 @@
 
 #Haven't included strided vectors yet, more important on matrix functions
 #::SVector{n, MC{N}}
-function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
+function DOT(X::Vector{MC},Y::Vector{MC}) #x,y E(Vector(MC{N})) where N <: Integer
     n = length(X)
     N = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
@@ -14,6 +14,12 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
     cum_cvgrad::Vector{Float64} = Vector{Float64}(undef,N)
     cum_cvgrad::Vector{Float64} .= 0
     cum_cnst::Bool = 1
+
+    temp1::MC = MC{1}(0.0,0.0)
+    temp2::MC = copy(temp1) #can run first part of loop out here, and make sure pointers arent changing while running loops
+    temp3::MC = copy(temp1) #maybe just start accounting for mod 5 at m+1. Unlikely systems are designed in mod5 anyway
+    temp4::MC = copy(temp1)
+    temp5::MC = copy(temp1)
 
     m::Integer = mod(n,5)
     if m != 0
@@ -30,15 +36,15 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
             cum_const = (cum_const && temp[6])
             =#
             #Still passing MC{N}'s
-            temp::MC = *(X[i], Y[i]) #Mult function needs more integration here
+            temp1 = *(X[i], Y[i]) #Mult function needs more integration here
             #temp = multtemp(X[i], Y[i])
-            cum_cv += temp.cv
-            cum_cc += temp.cc
-            cum_hi += temp.Intv.hi
-            cum_lo += temp.Intv.lo
-            cum_cvgrad += temp.cv_grad #Vector += SVector
-            cum_ccgrad += temp.cc_grad
-            cum_cnst = (cum_cnst && temp.cnst)
+            cum_cv += temp1.cv
+            cum_cc += temp1.cc
+            cum_hi += temp1.Intv.hi
+            cum_lo += temp1.Intv.lo
+            cum_cvgrad += temp1.cv_grad #Vector += SVector
+            cum_ccgrad += temp1.cc_grad
+            cum_cnst = (cum_cnst && temp.cnst) #pointer?
         end
     end
         #now continue in series of 5 up to i = n-m+1 , m from mod(n,m)
@@ -59,11 +65,11 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
            cum_const = (cum_const && temp1[6] && temp2[6] && temp3[6] && temp4[6] && temp5[6])
            =#
            #Still passing MC{N}'s
-           temp1::MC = *(X[i], Y[i])
-           temp2::MC = *(X[i+1], Y[i+1])
-           temp3::MC = *(X[i+2], Y[i+2])
-           temp4::MC = *(X[i+3], Y[i+3])
-           temp5::MC = *(X[i+4], Y[i+4])
+           temp1 = *(X[i], Y[i])
+           temp2 = *(X[i+1], Y[i+1])
+           temp3 = *(X[i+2], Y[i+2])
+           temp4 = *(X[i+3], Y[i+3])
+           temp5 = *(X[i+4], Y[i+4])
            cum_cv += temp1.cv +temp2.cv +temp3.cv +temp4.cv +temp5.cv
            cum_cc += temp1.cc +temp2.cc +temp3.cc +temp4.cc +temp5.cc
            cum_hi += temp1.Intv.hi +temp2.Intv.hi +temp3.Intv.hi +temp4.Intv.hi +temp5.Intv.hi
@@ -73,6 +79,5 @@ function DOT(X::SVector,Y::SVector) #x,y E(Vector(MC{N})) where N <: Integer
            cum_cnst = (cum_cnst && temp1.cnst && temp2.cnst && temp3.cnst && temp4.cnst && temp5.cnst)#ex this probably changes
        end
 
-    result = MC{N}(cum_cv, cum_cc, IntervalType(cum_lo, cum_hi), SVector{N,Float64}(cum_cvgrad), SVector{N,Float64}(cum_ccgrad), cum_cnst)#MCCormick Object
-    return result
+    return MC{N}(cum_cv, cum_cc, IntervalType(cum_lo, cum_hi), SVector{N,Float64}(cum_cvgrad), SVector{N,Float64}(cum_ccgrad), cum_cnst)#MCCormick Object
 end

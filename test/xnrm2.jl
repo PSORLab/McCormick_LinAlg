@@ -10,7 +10,7 @@ m1= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 13.0),SVec
 m2= MC{3}(4.0, 5.0, IntervalType(6.,7.), SVector{3,Float64}(7.0, 2.0, 6.0), SVector{3,Float64}(6.0, 2.0, 1.0), false)
 m3= MC{3}(4.0, 5.0, IntervalType(4., 5.),SVector{3,Float64}(4.0, 9.0, 6.0), SVector{3,Float64}(10.0, 7.0, 1.0),false)
 m4= MC{3}(3.0, 4.0, IntervalType(3., 4.),SVector{3,Float64}(3.0, 5.0, 8.0), SVector{3,Float64}(3.0, 2.0, 2.0), false)
-X = SVector{4,MC}(m1,m2,m3,m4)
+X = [m1,m2,m3,m4]
 
 yref = MC{3}(8.774964, 8.774964, IntervalType(8.77496, 10.7239), SVector{3,Float64}(4.20539, 7.28251, 10.2571), SVector{3,Float64}(4.67238, 8.0912, 11.3961), false)
 #Lots of mixed results sqrting MC using sqrt and pow with .5

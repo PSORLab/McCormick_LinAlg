@@ -10,8 +10,8 @@ m1= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVec
 m2= MC{3}(4.0, 5.0, IntervalType(4.,5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
 m3= MC{3}(4.0, 5.0, IntervalType(4., 5.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
 m4= MC{3}(3.0, 4.0, IntervalType(3., 4.), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-X = SVector{2,MC}(m1,m2)
-Y = SVector{2,MC}(m3, m4)
+X = [m1,m2]
+Y = [m3, m4]
 
 a::Float64 = 6.3
 
@@ -19,8 +19,8 @@ y = SAXPY(a, X, Y)
 y1 = y[1]
 y2 = y[2]
 
-yref = SVector{2, MC}(MC{3}(29.2, 36.5, IntervalType(29.1999, 36.5), SVector{3,Float64}(29.2, 36.5, 43.8), SVector{3,Float64}(21.9, 14.6, 7.3), false),
-                      MC{3}(28.2, 35.5, IntervalType(28.1999, 35.5), SVector{3,Float64}(29.2, 36.5, 43.8), SVector{3,Float64}(21.9, 14.6, 7.3), false))
+yref = [MC{3}(29.2, 36.5, IntervalType(29.1999, 36.5), SVector{3,Float64}(29.2, 36.5, 43.8), SVector{3,Float64}(21.9, 14.6, 7.3), false),
+                      MC{3}(28.2, 35.5, IntervalType(28.1999, 35.5), SVector{3,Float64}(29.2, 36.5, 43.8), SVector{3,Float64}(21.9, 14.6, 7.3), false)]
 yref1 = yref[1]
 yref2 = yref[2]
 
@@ -47,8 +47,8 @@ y = SAXPY(a, X, Y)
 y1 = y[1]
 y2 = y[2]
 
-yref =SVector{2,MC}(MC{3}(-27.5, -20.2, IntervalType(-27.5, -20.1999), SVector{3,Float64}(-14.9, -7.6, -0.3), SVector{3,Float64}(-22.2, -29.5, -36.8), false),
-                    MC{3}(-28.5, -21.2, IntervalType(-28.5, -21.1999), SVector{3,Float64}(-14.9, -7.6, -0.3), SVector{3,Float64}(-22.2, -29.5, -36.8), false))
+yref =[MC{3}(-27.5, -20.2, IntervalType(-27.5, -20.1999), SVector{3,Float64}(-14.9, -7.6, -0.3), SVector{3,Float64}(-22.2, -29.5, -36.8), false),
+                    MC{3}(-28.5, -21.2, IntervalType(-28.5, -21.1999), SVector{3,Float64}(-14.9, -7.6, -0.3), SVector{3,Float64}(-22.2, -29.5, -36.8), false)]
 yref1 = yref[1]
 yref2 = yref[2]
 
