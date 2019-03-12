@@ -1,6 +1,6 @@
 #Function to bechmark BLAS implementation against
 
-function simpledot(X::SVector,Y::SVector)
+function simpledot(X::Array{MC{N},1},Y::Array{MC{N},1}) where N
     n = length(X)
     N = length(X[1].cv_grad)
     R::MC = MC{N}(0.,0.)
@@ -10,6 +10,7 @@ function simpledot(X::SVector,Y::SVector)
     return R
 end
 
-function deadsimpledot(X::SVector, Y::SVector)
-    Z = sum(X .* Y)
+function deadsimpledot(X::Array{MC{N},1}, Y::Array{MC{N},1}) where N
+    Z::MC = sum(X .* Y)
+    return Z
 end

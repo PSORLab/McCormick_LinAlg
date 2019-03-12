@@ -46,7 +46,7 @@ TrialJudgement(+3137.82% => regression)
     G["opt"] = BenchmarkGroup(["optimized", "BLAS"])
     G["bench"] = BenchmarkGroup(["ineffifient", "slow", "simple"])
 
-    m1 = MC{3}(4.0, 5.0, IntervalType(4,4), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
+    m1 = MC{3}(4.0, 5.0, IntervalType(4,7), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     m2 = MC{3}(3.2,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
     m3 = MC{3}(4.0, 5.0, IntervalType(4, 5), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
     m4 = MC{3}(3.0, 4.0, IntervalType(3, 4), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
@@ -56,8 +56,8 @@ TrialJudgement(+3137.82% => regression)
     Random.seed!(0)
     n = 50 #Vector Size for all testing
     ind = rand(1:4, n*2)
-    X = SVector{n,MC}(map(x -> M[x], ind[1:n]))
-    Y = SVector{n, MC}(map(x -> M[x], ind[n+1:2n]))
+    X = map(x -> M[x], ind[1:n])
+    Y = map(x -> M[x], ind[n+1:2n])
 
 
 #DOT
