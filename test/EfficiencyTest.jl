@@ -78,9 +78,9 @@ TrialJudgement(-10.71% => improvement)
 #XSCAL
     println("XSCAL efficiency")
 
-    bxscal = @benchmarkable XSCAL($X, $a)
-    bsxscal = @benchmarkable simplexscal($X, $a)
-    bdsxscal = @benchmarkable deadsimplexscal($X, $a)
+    bxscal = @benchmarkable XSCAL($a, $X)
+    bsxscal = @benchmarkable simplexscal($a, $X)
+    bdsxscal = @benchmarkable deadsimplexscal($a, $X)
     for b in [bxscal, bsxscal, bdsxscal]
         tune!(b)
     end
