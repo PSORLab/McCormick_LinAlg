@@ -1,5 +1,6 @@
 #@test lines for GEMV etc
-#Fails 3 normal tests and most of Transpose case seeminlgy on rounding
+#Rounding errors on Transpose case. All failures within 10%
+#       "T" cv and cv_grad fields are wrong. Only 3rd out of 5 (middle) is completely right
 @testset "Test GEMV" begin
 
 mctol = 2E-3
@@ -20,6 +21,7 @@ n = 5
 A = rand(M, m,n)
 x = rand(M, n)
 yparam = rand(M, m)
+yc = copy(yparam)
 alpha, beta = 2.0, 6.1
 TRANS = "N"
 
@@ -97,6 +99,7 @@ yref1, yref2, yref3, yref4 = map(i -> yref[i], testset)
 @test isapprox(y4.cnst, yref4.cnst, atol = mctol)
 
 TRANS = "T"
+yparam = yc #GEMV set!'s y so need to reset value
 x, yparam = yparam, x
 y = GEMV(TRANS, m, n, alpha, A, x, beta, yparam) #Cheesey test, make unique solutions
 
