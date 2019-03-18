@@ -18,6 +18,7 @@ module EfficiencyTest
     include("SimpleFunctions/simplexscal.jl")
     include("SimpleFunctions/simplesaxpy.jl")
     include("SimpleFunctions/simplexnrm2.jl")
+    include("SimpleFunctions/simplegemv.jl")
 
     G = BenchmarkGroup()
     G["opt"] = BenchmarkGroup(["optimized", "BLAS"])

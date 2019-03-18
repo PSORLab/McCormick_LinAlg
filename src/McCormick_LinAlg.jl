@@ -14,7 +14,7 @@ module McCormick_LinAlg
 =#
     #Load Package EAGO xEwhJ version commented out for just McCormick.jl
     using EAGO
-    export XSCAL, DOT, SAXPY, XNRM2
+    export XSCAL, DOT, SAXPY, XNRM2, GEMV
 #=    include("BLAS_MC/BLAS_MC.jl")
     using .BLAS_MC
 
@@ -25,6 +25,7 @@ Just include files individually for now, under this one module no REEXPORT =#
     include("BLAS_MC/Lin_Functions/XSCAL.jl")
     include("BLAS_MC/Lin_Functions/XNRM2.jl")
     include("BLAS_MC/Lin_Functions/SAXPY.jl")
+    include("BLAS_MC/Lin_Functions/GEMV.jl")
 
     function testcorrectness()
         include("../test/BLAS_MCtest.jl")
