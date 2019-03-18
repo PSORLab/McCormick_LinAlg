@@ -1,5 +1,6 @@
 #Scalar multiplication of vector containing McCormick Objects
 #MC{cc,cv,Intv,cc_grad,cv_grad,cnst}
+#Still needs mod5 added
 #Implementation first found in Mitsos2009 (not full citation)
 function XSCAL(scal::Float64, MCv::Array{MC{N},1}) where N #where A<:AbstractArray #MC = single MC object, scal = Float64
     N::Int = length(MCv[1].cc_grad)

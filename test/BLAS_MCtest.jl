@@ -13,4 +13,5 @@ module Check_BLAS_MC
     include("xscal.jl")
     include("saxpy.jl")
     include("xnrm2.jl")
+    include("gemv.jl")
 end

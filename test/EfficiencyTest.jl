@@ -41,7 +41,7 @@ TrialJudgement(-10.71% => improvement)
     m4 = MC{3}(3.0, 4.0, IntervalType(3, 4), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     a = 6.3
 
-    M = (m1,m2,m3,m4)
+    M = [m1,m2,m3,m4]
     Random.seed!(0)
     n = 50 #Vector Size for all testing
     ind = rand(1:4, n*2)
@@ -87,5 +87,27 @@ TrialJudgement(-10.71% => improvement)
     new, old1, old2 = minimum(run(bxscal)), minimum(run(bsxscal)), minimum(run(bdsxscal))
     println(judge(new, old1))
     println(judge(new, old2))
+
+    #GEMV
+        println("GEMV efficiency")
+
+        M = [m1,m2,m3,m4]
+        m = 50
+        n = 30
+        A = rand(M, m,n)
+        x = rand(M, n)
+        y = rand(M, m)
+        alpha, beta = 2.0, 6.1
+        TRANS = "N"
+
+        y = GEMV(TRANS, m, n, alpha, A, x, beta, y) #Cheesey test, make unique solutions
+
+        bgemv = @benchmarkable GEMV($TRANS, $m, $n, $alpha, $A, $x, $beta, $y)
+        bdsgemv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $A, $x, $beta, $y)
+        for b in [bgemv, bdsgemv]
+            tune!(b)
+        end
+        new, old2 = minimum(run(bgemv)), minimum(run(bdsgemv))
+        println(judge(new, old2))
 
 end
