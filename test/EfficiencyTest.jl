@@ -9,19 +9,7 @@ module EfficiencyTest
     using McCormick_LinAlg
     using Random
     #import McCormick_LinAlg.XSCAL #shouldnt be necessary with proper export
-#=
-With MC{N} where N=50
- v1.1
-DOT efficiency
-TrialJudgement(-2.74% => invariant)
-TrialJudgement(-16.05% => improvement)
-SAXPY efficiency
-TrialJudgement(-56.55% => improvement)
-TrialJudgement(-48.57% => improvement)
-XSCAL efficiency
-TrialJudgement(-30.56% => improvement)
-TrialJudgement(-10.71% => improvement)
-=#
+
     #using...
 #Efficient Functions
 
