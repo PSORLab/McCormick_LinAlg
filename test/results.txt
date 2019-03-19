@@ -1,7 +1,8 @@
-Removing GLOBAL statements and removing type declarations to pre-allocations outside loops:
 #=
-With MC{N} where N=50
- v1.1
+
+Removing GLOBAL statements and removing type declarations to pre-allocations outside loops:
+With arrays of ~ elements=50
+ v1.1 - ajryz
 DOT efficiency
 TrialJudgement(-2.74% => invariant)
 TrialJudgement(-16.05% => improvement)
@@ -11,4 +12,10 @@ TrialJudgement(-48.57% => improvement)
 XSCAL efficiency
 TrialJudgement(-30.56% => improvement)
 TrialJudgement(-10.71% => improvement)
+GEMV efficiency
+TrialJudgement(-10.92% => improvement)
+
+#####################
+using @inbounds on SAXPY had no effect. Wrapping GEMV in a begin results in 1.56% improvement
+
 =#

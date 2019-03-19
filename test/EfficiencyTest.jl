@@ -20,10 +20,6 @@ module EfficiencyTest
     include("SimpleFunctions/simplexnrm2.jl")
     include("SimpleFunctions/simplegemv.jl")
 
-    G = BenchmarkGroup()
-    G["opt"] = BenchmarkGroup(["optimized", "BLAS"])
-    G["bench"] = BenchmarkGroup(["ineffifient", "slow", "simple"])
-
     m1 = MC{3}(4.0, 5.0, IntervalType(4,7), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     m2 = MC{3}(3.2,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
     m3 = MC{3}(4.0, 5.0, IntervalType(4, 5), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
@@ -80,14 +76,14 @@ module EfficiencyTest
     #GEMV
         println("GEMV efficiency")
 
-        M = [m1,m2,m3,m4]
-        m = 50
-        n = 30
-        A = rand(M, m,n)
-        x = rand(M, n)
-        y = rand(M, m)
-        alpha, beta = 2.0, 6.1
-        TRANS = "N"
+        M = [m1,m2,m3,m4];
+        m = 50;
+        n = 30;
+        A = rand(M, m,n);
+        x = rand(M, n);
+        y = rand(M, m);
+        alpha, beta = 2.0, 6.1;
+        TRANS = "N";
 
         y = GEMV(TRANS, m, n, alpha, A, x, beta, y) #Cheesey test, make unique solutions
 

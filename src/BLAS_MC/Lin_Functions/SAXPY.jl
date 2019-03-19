@@ -15,7 +15,7 @@ function SAXPY(scal::Float64, X::Array{MC{N},1}, Y::Array{MC{N},1}) where N #whe
     y::MC = copy(x)
 
         if scal >= 0
-                    for i in range(1,n)
+                    for i in 1:n #using eachindex(x) or something else to create iterable? 1:n seems faster than range
                             x = X[i] #referecne list everytime, inbounds macro, first loop outside to preallo
                             y = Y[i]#look to julia performance tips, fastmath has slightly higher rounding error.@warrant_type
                             lo = scal * x.Intv.lo + y.Intv.lo #Just take and pass regular vectors. PS static ~<100-1000

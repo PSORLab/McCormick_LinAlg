@@ -29,9 +29,9 @@ Just include files individually for now, under this one module no REEXPORT =#
     include("BLAS_MC/Lin_Functions/SAXPY.jl")
     include("BLAS_MC/Lin_Functions/GEMV.jl")
 
-    function testcorrectness()
-        include("../test/BLAS_MCtest.jl")
-    end
+    function testcorrectness()              #This is calling from current working directory, not source of file
+        include("../test/BLAS_MCtest.jl") #There was a trick to find package location in MathOptInt for this kind of call
+    end                                     #Could just turn file into callable function
     function testefficiency()
         include("../test/EfficiencyTest")
     end
