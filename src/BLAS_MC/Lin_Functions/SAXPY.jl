@@ -2,7 +2,7 @@
 #MC{fields of cv,cc,Intv,cv_grad,cc_grad,cnst}
 #Still needs mod5 added
 function SAXPY(scal::Float64, X::Array{MC{N},1}, Y::Array{MC{N},1}) where N #where A<:AbstractArray #MC = single MC object, scal = Float64
-    N::Int = length(X[1].cc_grad)
+    #N::Int = length(X[1].cc_grad)
     n::Int = length(X)
     R = Vector{MC}(undef, n) #Still needs the mod5 implementation
     lo::Float64 = 0.0

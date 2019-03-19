@@ -4,7 +4,7 @@
 #::SVector{n, MC{N}}
 function DOT(X::Array{MC{N},1},Y::Array{MC{N},1}) where N #x,y E(Vector(MC{N})) where N <: Integer
     n = length(X)
-    N = length(X[1].cv_grad)
+    #N = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
     cum_cv::Float64 = 0.0
     cum_hi::Float64 = 0.0

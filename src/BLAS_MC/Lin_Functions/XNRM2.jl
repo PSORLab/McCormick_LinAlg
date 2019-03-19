@@ -5,7 +5,7 @@
 #::SVector{n, MC{N}}
 function XNRM2(X::Array{MC{N},1}) where N #x,y E(Vector(MC{N})) where N <: Integer
     n::Int = length(X)
-    N::Int = length(X[1].cv_grad)
+    #N::Int = length(X[1].cv_grad)
     cum_cc::Float64 = 0.0
     cum_cv::Float64 = 0.0
     cum_hi::Float64 = 0.0

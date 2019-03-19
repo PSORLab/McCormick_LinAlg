@@ -12,7 +12,7 @@ module EfficiencyTest
 
     #using...
 #Efficient Functions
-
+# Can still implement @code_warntype, code_llvm, @inbounds, @fastmath, @simd,
 #Simple Implementations of each function
     include("SimpleFunctions/simpledot.jl")
     include("SimpleFunctions/simplexscal.jl")
