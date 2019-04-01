@@ -99,10 +99,13 @@ yref1, yref2, yref3, yref4 = map(i -> yref[i], testset)
 @test isapprox(y4.cnst, yref4.cnst, atol = mctol)
 
 TRANS = "T"
-yparam = yc #GEMV set!'s y so need to reset value
+yparam = yc #GEMV set!'s y so need to reset value (fixed)
 x, yparam = yparam, x
-y = GEMV(TRANS, m, n, alpha, A, x, beta, yparam) #Cheesey test, make unique solutions
-
+y = GEMV(TRANS, m, n, alpha, A, x, beta, yparam)
+#not communitive xy =/= yx for MC
+#sometimes its bounds that work but arent the same
+#both cv and cc should be within Interval bounds
+#interval bounds may be a generally good thing to check
 yref = [MC{3}(586.4, 714.6, IntervalType(474.599, 1055), SVector{3,Float64}([1100.1, 450.3, 498.8]), SVector{3,Float64}([260.2, 753.0, 808.4]), false),
         MC{3}(620.5, 777.3, IntervalType(468.399, 1168.5), SVector{3,Float64}([1494.4, 536.5, 540.6]), SVector{3,Float64}([358.3, 1000.2, 1070.1]), false),
         MC{3}(576.5, 819.3, IntervalType(480.399, 1122.5), SVector{3,Float64}([1122.4, 444.5, 540.6]), SVector{3,Float64}([374.3, 1032.2, 1294.1]), false),

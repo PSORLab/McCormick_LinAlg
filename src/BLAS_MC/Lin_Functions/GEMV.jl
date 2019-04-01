@@ -11,35 +11,38 @@ LDA ::Int
 =#
 #Might actually set!(y) param to result
 #Still need to write out field additions
-function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, x::Array{MC{N},1}, beta, y::Array{MC{N},1}) where N
-#test of parameters skipped
-    if TRANS == "N"
+function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
+#test of parameters skipped\
+    temp::MC = MC{N}(0.0,0.0)#Could write this out so not to outsource init
+    if TRANS == "N" #Do not use transpose
            lenx = n
            leny = m
-    else
+    else#Use transpose
            lenx = m
            leny = n
     end
-#no incx incy terms
-    #form y = beta*y
-    if beta != 1
+    y_2 = Array{MC{N},1}(undef, leny) #Result vector
+
+    #form y_2 = beta*y
+    if beta != 1#If 1 can ignore coefficient
     if beta == 0
-        MCzero = MC{}
-        y.= MCzero
+        y_2 .= temp
     else
-        y[:] = XSCAL(beta, y)[:]#May replace this
+        y_2[:] = XSCAL(beta, y)[:]#May replace this
     end
     end
-    if alpha == 0.0
+
+    if alpha == 0.0 # Second term disappears
         return y
     end
-    temp::MC = MC{1}(0.0,0.0)
+
+
     if TRANS == "N"
-        #For y := alpha*A*x + y
+        #make y := alpha*A*x + y
         for j in 1:n
             temp = alpha*x[j]
             for i in 1:m
-                y[i] = y[i] + temp*A[i,j]
+                y_2[i] = y_2[i] + temp*A[i,j]
             end
             #if incx: jx = jx + incx used for vector temp index
         end
@@ -49,9 +52,9 @@ function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, 
             for i in 1:m
                 temp += A[i,j] * x[i]
             end
-            y[j] = y[j] + alpha*temp
+            y_2[j] = y_2[j] + alpha*temp
             #With incy: inc jy by incy
         end
     end
-return y
+return y_2
 end
