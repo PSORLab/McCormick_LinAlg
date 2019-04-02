@@ -12,7 +12,7 @@ LDA ::Int
 #Might actually set!(y) param to result
 #Still need to write out field additions
 function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
-#test of parameters skipped\
+#test of parameter correctness skipped\
     temp::MC = MC{N}(0.0,0.0)#Could write this out so not to outsource init
     if TRANS == "N" #Do not use transpose
            lenx = n
@@ -23,7 +23,7 @@ function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, 
     end
     y_2 = Array{MC{N},1}(undef, leny) #Result vector
 
-    #form y_2 = beta*y
+    ###############form y_2 = beta*y
     if beta != 1#If 1 can ignore coefficient
     if beta == 0
         y_2 .= temp
@@ -38,7 +38,7 @@ function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, 
 
 
     if TRANS == "N"
-        #make y := alpha*A*x + y
+        #############make y := alpha*A*x + y
         for j in 1:n
             temp = alpha*x[j]
             for i in 1:m

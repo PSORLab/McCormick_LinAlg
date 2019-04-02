@@ -31,7 +31,8 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
         return y
     end
     kup1 = KU + 1
-    if TRANS == "N"
+    #Vector Matrix multiply
+    if TRANS == "N" #####Don't use transpose
         incx::Integer = 1
         jx::Integer = 1 #Assuming 1 == incx > 0
         for j in 1:n
@@ -42,13 +43,13 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
             end
             jx = jx + incx
         end
-    else#Use the transpose of A. Assume incx ==1
+    else############Use the transpose of A. Assume incx ==1
         incy::Integer = 1
         jy::Integer = 1 #Assuming 1 == incy > 0
         for j in 1:n
             temp = zero
             k = kup1 - j
-            for i in mac(1, j-ku):min(m, j+kl)
+            for i in max(1, j-ku):min(m, j+kl)
                 temp += A(k+i,j)*x(i)
             end
             y(jy) += alpha*temp
