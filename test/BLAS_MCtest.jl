@@ -5,6 +5,7 @@ module Check_BLAS_MC
     using StaticArrays
     using EAGO #Should be dependent in LinAlg So idk why MC not defined
     using McCormick_LinAlg
+    using Random
     #import McCormick_LinAlg.XSCAL #shouldnt be necessary with proper export
 
     #using...
