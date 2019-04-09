@@ -1,6 +1,6 @@
 #Symmetric Banded Matrix vector product
 #Not functional
-function SSBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
+function SBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
  #ignoring parameter check
  #ignore sparse vectors so kx,ky = 1
  MCzero::MC = MC{N}(0.0, 0.0)

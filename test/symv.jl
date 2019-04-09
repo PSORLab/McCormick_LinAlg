@@ -1,6 +1,6 @@
 #NOT COMPLETE - Need formatting for matrix, test data
 
-@testset "Test STRMV" begin
+@testset "Test SYMV" begin
 
 mctol = 2E-3
 
@@ -30,7 +30,7 @@ y_ = rand(M, m)
 alpha, beta = 2.0, 6.1
 TRANS = "N"
 
-y = STRMV(TRANS, m, n, kl, ku, alpha,  A, x, beta, y_)
+y = SYMV(TRANS, m, n, kl, ku, alpha,  A, x, beta, y_)
 
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
@@ -90,7 +90,7 @@ yref4=
 @test isapprox(y4.cnst, yref4.cnst, atol = mctol)
 =#
 TRANS = "T"
-y = STRMV(TRANS, m, n, kl, ku, alpha,  A, y_, beta, x)
+y = SYMV(TRANS, m, n, kl, ku, alpha,  A, y_, beta, x)
 #not communitive xy =/= yx for MC
 #sometimes its bounds that work but arent the same
 #both cv and cc should be within Interval bounds

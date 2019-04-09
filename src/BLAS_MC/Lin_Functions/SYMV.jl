@@ -1,6 +1,6 @@
 #Symmetric Matrix vector product
 #Not functional
-function SSYMV(UPLO::String, m::Integer, n::Integer, kl::Integer, ku::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
+function SYMV(UPLO::String, m::Integer, n::Integer, kl::Integer, ku::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
 #=
   UPLO is CHARACTER*1
     UPLO specifies whether the upper or lower
