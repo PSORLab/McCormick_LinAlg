@@ -1,4 +1,5 @@
-#Still editing the STRMV
+#Triangular Banded Matrix vector product
+#Not functional
 function STBMV(UPLO::String, TRANS::String, DIAG::STRING, n::Integer, k::Integer, A::Array{MC{N},2}, LDA::Integer, x::Array{MC{N},1}) where N
 #=
 UPLO = 'U' or 'u'   Only the upper triangular part of A

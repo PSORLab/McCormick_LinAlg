@@ -1,3 +1,5 @@
+#Triangular Matrix vector product
+#Not functional
 function STRMV(UPLO::String, TRANS::String, DIAG::STRING, n::Integer, A::Array{MC{N},2}, LDA::Integer, x::Array{MC{N},1}) where N
 #=
 UPLO = 'U' or 'u'   Only the upper triangular part of A

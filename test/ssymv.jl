@@ -1,9 +1,9 @@
-#NOT COMPLETE
+#NOT COMPLETE - Need formatting for matrix, test data
 
-@testset "Test SSBVM" begin
+@testset "Test SSYMV" begin
 
 mctol = 2E-3
-#better random objects than from gemv,gbmv
+
 m1 = MC{3}(5.0, 13.0, IntervalType(4,15), SVector{3,Float64}([4.0, 3.0, 18.0]), SVector{3,Float64}([11.0, 12.0, 8.0]), false)
 m2 = MC{3}(2.0, 3.0, IntervalType(1,7), SVector{3,Float64}([2.0, 16.0, 17.0]), SVector{3,Float64}([12.0, 13.0, 11.0]), false)
 m3 = MC{3}(8.0, 16.0, IntervalType(6,20), SVector{3,Float64}([16.0, 16.0, 4.0]), SVector{3,Float64}([15.0, 7.0, 10.0]), false)
@@ -18,7 +18,7 @@ kl = 2
 ku = 3
 A = rand(M, m,n)
 MCzero = MC{3}(0.0,0.0)
-for i in 1:m #MAKE A a SPARSE BANDED HERE
+for i in 1:m #Format matrix
     for j in 1:n
         if j<i-kl || j>i+ku
             A[i,j] = MCzero
@@ -30,7 +30,7 @@ y_ = rand(M, m)
 alpha, beta = 2.0, 6.1
 TRANS = "N"
 
-y = SSBVM(TRANS, m, n, kl, ku, alpha,  A, x, beta, y_) #Cheesey test, make unique solutions
+y = SSYMV(TRANS, m, n, kl, ku, alpha,  A, x, beta, y_)
 
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
@@ -90,7 +90,7 @@ yref4=
 @test isapprox(y4.cnst, yref4.cnst, atol = mctol)
 =#
 TRANS = "T"
-y = GBMV(TRANS, m, n, kl, ku, alpha,  A, y_, beta, x)
+y = SSYMV(TRANS, m, n, kl, ku, alpha,  A, y_, beta, x)
 #not communitive xy =/= yx for MC
 #sometimes its bounds that work but arent the same
 #both cv and cc should be within Interval bounds

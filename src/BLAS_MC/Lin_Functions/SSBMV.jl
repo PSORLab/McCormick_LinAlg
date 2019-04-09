@@ -1,3 +1,5 @@
+#Symmetric Banded Matrix vector product
+#Not functional
 function SSBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
  #ignoring parameter check
  #ignore sparse vectors so kx,ky = 1
@@ -6,7 +8,7 @@ function SSBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{M
  kx::Integer =1
  ky::Integer =1
  #Form beta*y
- y_2 = Array{MC{N},1}(undef, leny) #Result vector. dont want to solve in place of right now
+ y_2 = Array{MC{N},1}(undef, length(y)) #Result vector. dont want to solve in place of right now
  if beta != 1#If 1 can ignore coefficient
     if beta == 0
         y_2 .= temp
@@ -23,7 +25,7 @@ function SSBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{M
  temp2::MC = MCzero
  l::Integer = 0
 
- if "U" = UPLO #use upper triangular of A
+ if "U" == UPLO #use upper triangular of A
     kplus1 = k + 1
     for j = 1:n
          temp1 = alpha*x[j]
@@ -43,7 +45,7 @@ else #Use lower tringular of A
         temp2 = MCzero
         y_2[j] += temp1*A[1,j]
         l = 1-j
-        for 1 = (j+1):min(n,j+k)
+        for i = (j+1):min(n,j+k)
             y_2[i] += temp1*A[l+i,j]
             temp2 += A[l+i,j]*x[i]
         end
