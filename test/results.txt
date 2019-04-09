@@ -16,6 +16,6 @@ GEMV efficiency
 TrialJudgement(-10.92% => improvement)
 
 #####################
-using @inbounds on SAXPY had no effect. Wrapping GEMV in a begin results in 1.56% improvement
+using @inbounds on SAXPY had no effect. Wrapping GEMV in a begin+@inbounds results in 1.56% improvement
 
 =#

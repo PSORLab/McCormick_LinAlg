@@ -12,8 +12,10 @@ kx =1
 ky =1
 x_2::Array{MC{N},1} = x #Result vector. dont want to solve in place of right now
 temp::MC = MCzero
-nounit = DIAG =="N"
+nounit = (DIAG == "N")
 if TRANS == "N" #A*x
+
+    if UPLO == "U"#Upper triangular
     for j in 1:n
         if x_2[j] != MCzero #May need to check this different way
             temp = x_2[j]
@@ -21,11 +23,13 @@ if TRANS == "N" #A*x
                 x_2[i] += temp*A[i,j]
             end
             if nounit
-                x_2[j] += A[i,j]
+                x_2[j] *= A[j,j]
             end
         end
+
     else
-        for j i= n:1:-1
+
+        for j = n:-1:1 #Lower triangular
             if x_2[j] != MCzero
                 temp = x_2[j]
                 for i = n:-1:(j+1)
@@ -37,9 +41,11 @@ if TRANS == "N" #A*x
             end
         end
     end
+
 else #For the transpose of A case
-    if UPLO == "U"
-        for j = n:1:-1
+
+    if UPLO == "U" #Upper triangular
+        for j = n:-1:1
             temp = x_2[j]
             if nounit
                 temp *= A[j,j] #This line above may be i,j (wrong)
@@ -49,8 +55,10 @@ else #For the transpose of A case
             end
             x_2[j] = temp
         end
+
     else
-        for j = 1:n
+
+        for j = 1:n #Lower triangular
             temp = x_2[j]
             if nounit
                 temp *= A[j,j]

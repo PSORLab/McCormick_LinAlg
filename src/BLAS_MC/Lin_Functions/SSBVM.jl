@@ -1,5 +1,4 @@
-SSBMV(UPLO,N,K,ALPHA,A,LDA,X,INCX,BETA,Y,INCY)
-function SSYMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
+function SSBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
  #ignoring parameter check
  #ignore sparse vectors so kx,ky = 1
  MCzero::MC = MC{N}(0.0, 0.0)
@@ -9,18 +8,21 @@ function SSYMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{M
  #Form beta*y
  y_2 = Array{MC{N},1}(undef, leny) #Result vector. dont want to solve in place of right now
  if beta != 1#If 1 can ignore coefficient
- if beta == 0
-     y_2 .= temp
- else
-     y_2[:] = XSCAL(beta, y)[:]#May replace this
+    if beta == 0
+        y_2 .= temp
+    else
+        y_2[:] = XSCAL(beta, y)[:]#May replace this
+    end
  end
- end
+
  if alpha==0
      return y_2
  end
+
  temp1::MC = MCzero
  temp2::MC = MCzero
  l::Integer = 0
+
  if "U" = UPLO #use upper triangular of A
     kplus1 = k + 1
     for j = 1:n
@@ -33,7 +35,9 @@ function SSYMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{M
          end
     y_2[j] += temp1*A[kplus1,j] + alpha*temp2
     end
+
 else #Use lower tringular of A
+
     for j = 1:n
         temp1 = alpha*x[j]
         temp2 = MCzero
