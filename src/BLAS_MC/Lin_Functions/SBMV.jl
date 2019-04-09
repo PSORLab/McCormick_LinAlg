@@ -11,7 +11,7 @@ function SBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC
  y_2 = Array{MC{N},1}(undef, length(y)) #Result vector. dont want to solve in place of right now
  if beta != 1#If 1 can ignore coefficient
     if beta == 0
-        y_2 .= temp
+        y_2 .= MCzero
     else
         y_2[:] = XSCAL(beta, y)[:]#May replace this
     end
