@@ -12,6 +12,7 @@ M = [m1,m2,m3,m4]
 Random.seed!(0)
 
 n = 10
+m=n
 k = 2
 AFu = rand(M, m,n)
 MCzero = MC{3}(0.0,0.0)

@@ -45,12 +45,8 @@ y = SBMV(UPLO, n, k, alpha, A, x, beta, y_)
 
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
-
-yref1=MC{3}(256.5, 1169.3, IntervalType(96.3999, 1631.5), SVector{3,Float64}(400.4, 516.3, 533.8), SVector{3,Float64}(1855.1, 1309.2, 1462.8), false)
-yref2=MC{3}(298.5, 1357.3, IntervalType(110.399, 2093.5), SVector{3,Float64}(456.4, 762.3, 815.8), SVector{3,Float64}(2701.1, 2209.2, 2230.8), false)
-yref3=MC{3}(160.2, 806.3, IntervalType(48.0999, 1376.71), SVector{3,Float64}(228.2, 679.6, 671.7), SVector{3,Float64}(2021.2, 1821.3, 1771.1), false)
-yref4=MC{3}(208.9, 829.5, IntervalType(104.299, 1287.81), SVector{3,Float64}(509.0, 720.8, 400.4), SVector{3,Float64}(1579.6, 1160.9, 1235.3), false)
-
+y_ref = alpha*AF*x + beta*y_
+yref1, yref2, yref3, yref4 = map(i -> y_ref[i], testset)
 
 
 @test isapprox(y1.Intv.lo, yref1.Intv.lo, atol = mctol)
