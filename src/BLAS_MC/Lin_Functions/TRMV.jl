@@ -1,6 +1,6 @@
 #Triangular Matrix vector product
 #Not functional
-function TRMV(UPLO::String, TRANS::String, DIAG::STRING, n::Integer, A::Array{MC{N},2}, LDA::Integer, x::Array{MC{N},1}) where N
+function TRMV(UPLO::String, TRANS::String, DIAG::String, n::Integer, A::Array{MC{N},2}, x::Array{MC{N},1}) where N
 #=
 UPLO = 'U' or 'u'   Only the upper triangular part of A
      = 'L' or 'l'   Only the lower triangular part of A
@@ -12,20 +12,26 @@ MCzero::MC = MC{N}(0.0, 0.0)
 #Not using sparse vectors, assume incx,incy==1
 kx =1
 ky =1
-x_2::Array{MC{N},1} = x #Result vector. dont want to solve in place of right now
+leny = length(x)
+x_2::Array{MC{N},1} = Array{MC{N},1}(undef, leny)  #Result vector
+for i in 1:leny
+    x_2[i] = x[i]
+end
 temp::MC = MCzero
 nounit = (DIAG == "N")
 if TRANS == "N" #A*x
 
     if UPLO == "U"#Upper triangular
-    for j in 1:n
-        if x_2[j] != MCzero #May need to check this different way
-            temp = x_2[j]
-            for i = 1:(j-1)
-                x_2[i] += temp*A[i,j]
-            end
-            if nounit
-                x_2[j] *= A[j,j]
+
+        for j in 1:n
+            if x_2[j] != MCzero #May need to check this different way
+                temp = x_2[j]
+                for i = 1:(j-1)
+                    x_2[i] += temp*A[i,j]
+                end
+                if nounit
+                    x_2[j] *= A[j,j]
+                end
             end
         end
 
@@ -35,7 +41,7 @@ if TRANS == "N" #A*x
             if x_2[j] != MCzero
                 temp = x_2[j]
                 for i = n:-1:(j+1)
-                    x_2[j] += temp*A[i,j]
+                    x_2[i] += temp*A[i,j]
                 end
                 if nounit
                     x_2[j] *= A[j,j]
@@ -47,6 +53,7 @@ if TRANS == "N" #A*x
 else #For the transpose of A case
 
     if UPLO == "U" #Upper triangular
+        
         for j = n:-1:1
             temp = x_2[j]
             if nounit

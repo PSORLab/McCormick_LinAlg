@@ -3,8 +3,7 @@
 @testset "Test SBMV" begin
 
 mctol = 2E-3
-#= m = MC{2}(2.0, 3.0, IntervalType(1.0,4.0),
-             seed_gradient(Float64,1,2), seed_gradient(Float64,1,2), false) =#
+#Since errors are rounding, may just need to enter more SigFigs in test data
  m1 = MC{3}(5.0, 13.0, IntervalType(4,15), SVector{3,Float64}([4.0, 3.0, 18.0]), SVector{3,Float64}([11.0, 12.0, 8.0]), false)
  m2 = MC{3}(2.0, 3.0, IntervalType(1,7), SVector{3,Float64}([2.0, 16.0, 17.0]), SVector{3,Float64}([12.0, 13.0, 11.0]), false)
  m3 = MC{3}(8.0, 16.0, IntervalType(6,20), SVector{3,Float64}([16.0, 16.0, 4.0]), SVector{3,Float64}([15.0, 7.0, 10.0]), false)
@@ -21,7 +20,7 @@ AF = rand(M, m,n)
 MCzero = MC{3}(0.0,0.0)
 for i in 1:m #MAKE A a symmetric SPARSE BANDED HERE
     for j in 1:n
-        if j<i-kl || j>i+ku
+        if j<i-k || j>i+k
             AF[i,j] = MCzero
         end
     end
@@ -34,23 +33,25 @@ for i in 1:m #Make Symmetric (copy Upper to Lower)
     end
 end
 include("../src/BLAS_MC/Lin_Functions/form.jl")
-A = sband(AF,m,n,k) #AF is reformatted to a banded matrix storage form fit for this function
+A = sbandu(AF,m,n,k) #AF is reformatted to a banded matrix storage form fit for this function
 
 x = rand(M, n)
 y_ = rand(M, m)
 alpha, beta = 2.0, 6.1
 UPLO = "U"
-#yref = alpha*AF*x + beta*y_;
+#y_ref = alpha*AF*x + beta*y_;
 y = SBMV(UPLO, n, k, alpha, A, x, beta, y_)
 
 
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
 
-yref1=MC{3}(280.5, 1271.3, IntervalType(102.399, 1883.5), SVector{3,Float64}(432.4, 628.3, 643.8), SVector{3,Float64}(2319.1, 1795.2, 1884.8), false)
-yref2=MC{3}(374.5, 1813.3, IntervalType(158.399, 2693.5), SVector{3,Float64}(632.4, 926.3, 1063.8), SVector{3,Float64}(3283.1, 2563.2, 2626.8), false)
-yref3=MC{3}(312.2, 1718.3, IntervalType(144.099, 2576.71), SVector{3,Float64}(580.2, 1007.6, 1167.7), SVector{3,Float64}(3185.2, 2529.3, 2563.1), false)
-yref4=MC{3}(328.9, 1369.5, IntervalType(140.299, 2007.81), SVector{3,Float64}(725.0, 912.8, 472.4), SVector{3,Float64}(2311.6, 1520.9, 1751.3), false)
+yref1=MC{3}(256.5, 1169.3, IntervalType(96.3999, 1631.5), SVector{3,Float64}(400.4, 516.3, 533.8), SVector{3,Float64}(1855.1, 1309.2, 1462.8), false)
+yref2=MC{3}(298.5, 1357.3, IntervalType(110.399, 2093.5), SVector{3,Float64}(456.4, 762.3, 815.8), SVector{3,Float64}(2701.1, 2209.2, 2230.8), false)
+yref3=MC{3}(160.2, 806.3, IntervalType(48.0999, 1376.71), SVector{3,Float64}(228.2, 679.6, 671.7), SVector{3,Float64}(2021.2, 1821.3, 1771.1), false)
+yref4=MC{3}(208.9, 829.5, IntervalType(104.299, 1287.81), SVector{3,Float64}(509.0, 720.8, 400.4), SVector{3,Float64}(1579.6, 1160.9, 1235.3), false)
+
+
 
 @test isapprox(y1.Intv.lo, yref1.Intv.lo, atol = mctol)
 @test isapprox(y1.Intv.hi, yref1.Intv.hi, atol = mctol)
@@ -65,6 +66,8 @@ yref4=MC{3}(328.9, 1369.5, IntervalType(140.299, 2007.81), SVector{3,Float64}(72
 @test isapprox(y4.Intv.hi, yref4.Intv.hi, atol = mctol)
 
 UPLO = "L"
+A = sbandl(AF,m,n,k) #AF is reformatted to a banded matrix storage form fit for this function
+
 y = SBMV(UPLO, n, k, alpha, A, x, beta, y_)#Using the lower triangular of A
 
         testset = [1,3,6,10]

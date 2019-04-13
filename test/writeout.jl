@@ -13,7 +13,7 @@ MC = replace(MC, '['=>intv, count=1)
 MC = replace(MC, '['=>sv, count=2)
 MC = replace(MC, ']'=>')')
 
-print(MC)
+println(MC)
 end
 
 function writeout(MC2::MC) #Requires EAGO or some handler of ::MC to load
@@ -26,5 +26,5 @@ MC = replace(MC, '['=>intv, count=1)
 MC = replace(MC, '['=>sv, count=2)
 MC = replace(MC, ']'=>')')
 
-print(MC)
+println(MC)
 end

@@ -18,140 +18,38 @@ kl = 2
 ku = 3
 A = rand(M, m,n)
 MCzero = MC{3}(0.0,0.0)
-for i in 1:m #Format matrix
+for i in 1:m #Make Symmetric (copy Upper to Lower)
     for j in 1:n
-        if j<i-kl || j>i+ku
-            A[i,j] = MCzero
+        if j < i
+            AF[i,j] = AF[j,i]
         end
     end
 end
 x = rand(M, n)
 y_ = rand(M, m)
 alpha, beta = 2.0, 6.1
-TRANS = "N"
+UPLO = "U"
 
-y = SYMV(TRANS, m, n, kl, ku, alpha,  A, x, beta, y_)
-
+y = SYMV(UPLO, m, n, kl, ku, alpha, A, x, beta, y_)
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
+y_ref = alpha*A*x + beta*y_
+yref1, yref2, yref3, yref4 = map(i -> y_ref[i], testset)
 
-yref1=
-yref2=
-yref3=
-yref4=
-
-#@test isapprox(y1.cv, yref1.cv, atol = mctol)
-#@test isapprox(y1.cc, yref1.cc, atol = mctol)
 @test isapprox(y1.Intv.lo, yref1.Intv.lo, atol = mctol)
-#=@test isapprox(y1.Intv.hi, yref1.Intv.hi, atol = mctol)
-@test isapprox(y1.cv_grad[1], yref1.cv_grad[1], atol = mctol)
-@test isapprox(y1.cv_grad[2], yref1.cv_grad[2], atol = mctol)
-@test isapprox(y1.cv_grad[3], yref1.cv_grad[3], atol = mctol)
-@test isapprox(y1.cc_grad[1], yref1.cc_grad[1], atol = mctol)
-@test isapprox(y1.cc_grad[2], yref1.cc_grad[2], atol = mctol)
-@test isapprox(y1.cc_grad[3], yref1.cc_grad[3], atol = mctol)
-@test isapprox(y1.cnst, yref1.cnst, atol = mctol)
-
-@test isapprox(y2.cv, yref2.cv, atol = mctol)
-@test isapprox(y2.cc, yref2.cc, atol = mctol) =#
-@test isapprox(y2.Intv.lo, yref2.Intv.lo, atol = mctol)
 @test isapprox(y2.Intv.hi, yref2.Intv.hi, atol = mctol)
-#=@test isapprox(y2.cv_grad[1], yref2.cv_grad[1], atol = mctol)
-@test isapprox(y2.cv_grad[2], yref2.cv_grad[2], atol = mctol)
-@test isapprox(y2.cv_grad[3], yref2.cv_grad[3], atol = mctol)
-@test isapprox(y2.cc_grad[1], yref2.cc_grad[1], atol = mctol)
-@test isapprox(y2.cc_grad[2], yref2.cc_grad[2], atol = mctol)
-@test isapprox(y2.cc_grad[3], yref2.cc_grad[3], atol = mctol)
-@test isapprox(y2.cnst, yref2.cnst, atol = mctol)
-
-
-@test isapprox(y3.cv, yref3.cv, atol = mctol)
-@test isapprox(y3.cc, yref3.cc, atol = mctol)=#
 @test isapprox(y3.Intv.lo, yref3.Intv.lo, atol = mctol)
-@test isapprox(y3.Intv.hi, yref3.Intv.hi, atol = mctol)
-#=@test isapprox(y3.cv_grad[1], yref3.cv_grad[1], atol = mctol) #These 3 all failed
-@test isapprox(y3.cv_grad[2], yref3.cv_grad[2], atol = mctol)
-@test isapprox(y3.cv_grad[3], yref3.cv_grad[3], atol = mctol)
-@test isapprox(y3.cc_grad[1], yref3.cc_grad[1], atol = mctol)
-@test isapprox(y3.cc_grad[2], yref3.cc_grad[2], atol = mctol)
-@test isapprox(y3.cc_grad[3], yref3.cc_grad[3], atol = mctol)
-@test isapprox(y3.cnst, yref3.cnst, atol = mctol)
-
-@test isapprox(y4.cv, yref4.cv, atol = mctol)
-@test isapprox(y4.cc, yref4.cc, atol = mctol)=#
-@test isapprox(y4.Intv.lo, yref4.Intv.lo, atol = mctol)
 @test isapprox(y4.Intv.hi, yref4.Intv.hi, atol = mctol)
-#=@test isapprox(y4.cv_grad[1], yref4.cv_grad[1], atol = mctol)
-@test isapprox(y4.cv_grad[2], yref4.cv_grad[2], atol = mctol)
-@test isapprox(y4.cv_grad[3], yref4.cv_grad[3], atol = mctol)
-@test isapprox(y4.cc_grad[1], yref4.cc_grad[1], atol = mctol)#These 3 failed
-@test isapprox(y4.cc_grad[2], yref4.cc_grad[2], atol = mctol)
-@test isapprox(y4.cc_grad[3], yref4.cc_grad[3], atol = mctol)
-@test isapprox(y4.cnst, yref4.cnst, atol = mctol)
-=#
-TRANS = "T"
+###################################################################
+UPLO = "L" #Using lower triangular of A for calulcations
+
 y = SYMV(TRANS, m, n, kl, ku, alpha,  A, y_, beta, x)
-#not communitive xy =/= yx for MC
-#sometimes its bounds that work but arent the same
-#both cv and cc should be within Interval bounds
-#interval bounds may be a generally good thing to check
-yref = []
+testset = [1,3,6,10]
+y1, y2, y3, y4 = map(i -> y[i], testset)
+yref1, yref2, yref3, yref4 = map(i -> y_ref[i], testset)
 
-        testset = [1,3,6,10]
-        y1, y2, y3 = map(i -> y[i], testset)
-
-yref1=
-yref2=
-yref3=
-yref4=
-
-#@test isapprox(y1.cv, yref1.cv, atol = mctol)
-#@test isapprox(y1.cc, yref1.cc, atol = mctol)
-#=@test isapprox(y1.Intv.lo, yref1.Intv.lo, atol = mctol)
-@test isapprox(y1.Intv.hi, yref1.Intv.hi, atol = mctol)
-@test isapprox(y1.cv_grad[1], yref1.cv_grad[1], atol = mctol)
-@test isapprox(y1.cv_grad[2], yref1.cv_grad[2], atol = mctol)
-@test isapprox(y1.cv_grad[3], yref1.cv_grad[3], atol = mctol)
-@test isapprox(y1.cc_grad[1], yref1.cc_grad[1], atol = mctol)
-@test isapprox(y1.cc_grad[2], yref1.cc_grad[2], atol = mctol)
-@test isapprox(y1.cc_grad[3], yref1.cc_grad[3], atol = mctol)
-@test isapprox(y1.cnst, yref1.cnst, atol = mctol)
-
-@test isapprox(y2.cv, yref2.cv, atol = mctol)
-@test isapprox(y2.cc, yref2.cc, atol = mctol)=#
-@test isapprox(y2.Intv.lo, yref2.Intv.lo, atol = mctol)
+@test isapprox(y1.Intv.lo, yref1.Intv.lo, atol = mctol)
 @test isapprox(y2.Intv.hi, yref2.Intv.hi, atol = mctol)
-#=@test isapprox(y2.cv_grad[1], yref2.cv_grad[1], atol = mctol)
-@test isapprox(y2.cv_grad[2], yref2.cv_grad[2], atol = mctol)
-@test isapprox(y2.cv_grad[3], yref2.cv_grad[3], atol = mctol)
-@test isapprox(y2.cc_grad[1], yref2.cc_grad[1], atol = mctol)
-@test isapprox(y2.cc_grad[2], yref2.cc_grad[2], atol = mctol)
-@test isapprox(y2.cc_grad[3], yref2.cc_grad[3], atol = mctol)
-@test isapprox(y2.cnst, yref2.cnst, atol = mctol)
-
-
-@test isapprox(y3.cv, yref3.cv, atol = mctol)
-@test isapprox(y3.cc, yref3.cc, atol = mctol)=#
 @test isapprox(y3.Intv.lo, yref3.Intv.lo, atol = mctol)
-@test isapprox(y3.Intv.hi, yref3.Intv.hi, atol = mctol)
-#=@test isapprox(y3.cv_grad[1], yref3.cv_grad[1], atol = mctol) #These 3 all failed
-@test isapprox(y3.cv_grad[2], yref3.cv_grad[2], atol = mctol)
-@test isapprox(y3.cv_grad[3], yref3.cv_grad[3], atol = mctol)
-@test isapprox(y3.cc_grad[1], yref3.cc_grad[1], atol = mctol)
-@test isapprox(y3.cc_grad[2], yref3.cc_grad[2], atol = mctol)
-@test isapprox(y3.cc_grad[3], yref3.cc_grad[3], atol = mctol)
-@test isapprox(y3.cnst, yref3.cnst, atol = mctol)
-
-@test isapprox(y4.cv, yref4.cv, atol = mctol)
-@test isapprox(y4.cc, yref4.cc, atol = mctol)=#
-@test isapprox(y4.Intv.lo, yref4.Intv.lo, atol = mctol)
 @test isapprox(y4.Intv.hi, yref4.Intv.hi, atol = mctol)
-#=@test isapprox(y4.cv_grad[1], yref4.cv_grad[1], atol = mctol)
-@test isapprox(y4.cv_grad[2], yref4.cv_grad[2], atol = mctol)
-@test isapprox(y4.cv_grad[3], yref4.cv_grad[3], atol = mctol)
-@test isapprox(y4.cc_grad[1], yref4.cc_grad[1], atol = mctol)
-@test isapprox(y4.cc_grad[2], yref4.cc_grad[2], atol = mctol)
-@test isapprox(y4.cc_grad[3], yref4.cc_grad[3], atol = mctol)
-@test isapprox(y4.cnst, yref4.cnst, atol = mctol)
-=#
 end
