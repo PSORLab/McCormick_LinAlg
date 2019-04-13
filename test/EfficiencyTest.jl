@@ -22,9 +22,9 @@ module EfficiencyTest
     include("SimpleFunctions/simplegemv.jl")
 
     m1 = MC{3}(4.0, 5.0, IntervalType(4,7), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    m2 = MC{3}(3.2,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
+    m2 = MC{3}(33.7,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
     m3 = MC{3}(4.0, 5.0, IntervalType(4, 5), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
-    m4 = MC{3}(3.0, 4.0, IntervalType(3, 4), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
+    m4 = MC{3}(3.0, 4.0, IntervalType(2, 8), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     a = 6.3
 
     M = [m1,m2,m3,m4]
@@ -75,25 +75,46 @@ module EfficiencyTest
     println(judge(new, old2))
 
     #GEMV
-        println("GEMV efficiency")
+    println("GEMV efficiency")
 
-        M = [m1,m2,m3,m4];
-        m = 50;
-        n = 30;
-        A = rand(M, m,n);
-        x = rand(M, n);
-        y = rand(M, m);
-        alpha, beta = 2.0, 6.1;
-        TRANS = "N";
+    M = [m1,m2,m3,m4];
+    m = n;
+    A = rand(M, m,n);
+    x = rand(M, n);
+    y = rand(M, m);
+    alpha, beta = 2.0, 6.1;
+    TRANS = "N";
 
-        y = GEMV(TRANS, m, n, alpha, A, x, beta, y) #Cheesey test, make unique solutions
+    bgemv = @benchmarkable GEMV($TRANS, $m, $n, $alpha, $A, $x, $beta, $y)
+    bdsgemv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $A, $x, $beta, $y)
+    for b in [bgemv, bdsgemv]
+        tune!(b)
+    end
+    new, old2 = minimum(run(bgemv)), minimum(run(bdsgemv))
+    println(judge(new, old2))
 
-        bgemv = @benchmarkable GEMV($TRANS, $m, $n, $alpha, $A, $x, $beta, $y)
-        bdsgemv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $A, $x, $beta, $y)
-        for b in [bgemv, bdsgemv]
-            tune!(b)
+#GBVM
+    AB = copy(A)
+    kl = 5 #Efficiency is very dependednt on the bandwidth
+    ku = 4
+    AB = rand(M, m,n)
+    MCzero = MC{3}(0.0,0.0)
+    for i in 1:m #MAKE A a SPARSE BANDED HERE
+        for j in 1:n
+            if j<i-kl || j>i+ku
+                AB[i,j] = MCzero
+            end
         end
-        new, old2 = minimum(run(bgemv)), minimum(run(bdsgemv))
-        println(judge(new, old2))
+    end
+    include("../../src/BLAS_MC/Lin_Functions/form.jl")
+    ABg = band(AB,m,n,ku,kl)
+    bgbmv = @benchmarkable GBMV($TRANS, $m, $n, $kl, $ku, $alpha, $ABg, $x, $beta, $y)
+    bdsgbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AB, $x, $beta, $y) #gemv is simple matrix mult,
+    for b in [bgbmv, bdsgbmv]                                                           #So it is benchmark for all special matrix forms
+        tune!(b)
+    end
+    new, old = minimum(run(bgmbv)), minimum(run(bdsgbmv))
+    println(judge(new, old))
+
 
 end

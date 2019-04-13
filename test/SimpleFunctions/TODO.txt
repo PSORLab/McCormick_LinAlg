@@ -1,0 +1,4 @@
+-Make addition function and replace "+"'s with it to prevent overloading
+-Make linear solve function
+-tbmv.jl
+-Interval Estimation of determinant of a matrix for finding a safe time step
