@@ -1,6 +1,6 @@
 #Triangular Banded Matrix vector product
 #Not functional
-function TBMV(UPLO::String, TRANS::String, DIAG::STRING, n::Integer, k::Integer, A::Array{MC{N},2}, LDA::Integer, x::Array{MC{N},1}) where N
+function TBMV(UPLO::String, TRANS::String, DIAG::String, n::Integer, k::Integer, A::Array{MC{N},2}, LDA::Integer, x::Array{MC{N},1}) where N
 #=
 UPLO = 'U' or 'u'   Only the upper triangular part of A
      = 'L' or 'l'   Only the lower triangular part of A
