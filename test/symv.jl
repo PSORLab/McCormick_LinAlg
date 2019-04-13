@@ -14,9 +14,7 @@ Random.seed!(0)
 
 m = 10
 n = 10
-kl = 2
-ku = 3
-A = rand(M, m,n)
+AF = rand(M, m,n)
 MCzero = MC{3}(0.0,0.0)
 for i in 1:m #Make Symmetric (copy Upper to Lower)
     for j in 1:n
@@ -30,10 +28,10 @@ y_ = rand(M, m)
 alpha, beta = 2.0, 6.1
 UPLO = "U"
 
-y = SYMV(UPLO, m, n, kl, ku, alpha, A, x, beta, y_)
+y = SYMV(UPLO, n, alpha, AF, x, beta, y_)
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
-y_ref = alpha*A*x + beta*y_
+y_ref = alpha*AF*x + beta*y_
 yref1, yref2, yref3, yref4 = map(i -> y_ref[i], testset)
 
 @test isapprox(y1.Intv.lo, yref1.Intv.lo, atol = mctol)
@@ -43,7 +41,7 @@ yref1, yref2, yref3, yref4 = map(i -> y_ref[i], testset)
 ###################################################################
 UPLO = "L" #Using lower triangular of A for calulcations
 
-y = SYMV(TRANS, m, n, kl, ku, alpha,  A, y_, beta, x)
+y = SYMV(UPLO, n, alpha, AF, x, beta, y_)
 testset = [1,3,6,10]
 y1, y2, y3, y4 = map(i -> y[i], testset)
 yref1, yref2, yref3, yref4 = map(i -> y_ref[i], testset)

@@ -1,6 +1,6 @@
 #Symmetric Matrix vector product
 #Not functional
-function SYMV(UPLO::String, m::Integer, n::Integer, kl::Integer, ku::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
+function SYMV(UPLO::String, n::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
 #=
   UPLO is CHARACTER*1
     UPLO specifies whether the upper or lower
@@ -38,7 +38,7 @@ if "U" == UPLO #Use upper triangular of A
         temp2 = MCzero
         for i = 1:(j-1)
             y_2[i] += temp1*A[i,j]
-            temp2 = temp2 + A[i,j]*x[i]
+            temp2 += A[i,j]*x[i]
         end
         y_2[j] += temp1*A[j,j] + alpha*temp2
     end
