@@ -30,7 +30,7 @@ function SAXPY(scal::Float64, X::Array{MC{N},1}, Y::Array{MC{N},1}) where N #whe
                             R[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
                     end #global not necessary in f(x)s!!!
         else
-                    for i in range(1,n)
+                    for i = 1:n
                             x = X[i]
                             y = Y[i]
                             lo = scal * x.Intv.hi + y.Intv.lo
@@ -38,7 +38,7 @@ function SAXPY(scal::Float64, X::Array{MC{N},1}, Y::Array{MC{N},1}) where N #whe
                             cc = scal * x.cv      + y.cc
                             cv = scal * x.cc      + y.cv
                             cnst = x.cnst && y.cnst
-                            for ip in range(1, N)
+                            for ip = 1:N
                                             cc_grad[ip] = scal * x.cv_grad[ip] + y.cc_grad[ip]
                                             cv_grad[ip] = scal * x.cc_grad[ip] + y.cv_grad[ip]
                             end
