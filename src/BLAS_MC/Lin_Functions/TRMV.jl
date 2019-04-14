@@ -13,7 +13,7 @@ MCzero::MC = MC{N}(0.0, 0.0)
 kx =1
 ky =1
 leny = length(x)
-x_2::Array{MC{N},1} = Array{MC{N},1}(undef, leny)  #Result vector
+x_2::Array{MC{N},1} = fill(MCzero, leny)  #Result vector
 for i in 1:leny
     x_2[i] = x[i]
 end
@@ -53,7 +53,7 @@ if TRANS == "N" #A*x
 else #For the transpose of A case
 
     if UPLO == "U" #Upper triangular
-        
+
         for j = n:-1:1
             temp = x_2[j]
             if nounit

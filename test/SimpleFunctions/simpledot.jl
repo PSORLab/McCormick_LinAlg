@@ -3,7 +3,7 @@
 function simpledot(X::Array{MC{N},1},Y::Array{MC{N},1}) where N
     n = length(X)
     R::MC = MC{N}(0.,0.)
-    for i in range(1,n)
+    for i = 1:n
         R += X[i] * Y[i]
     end
     return R

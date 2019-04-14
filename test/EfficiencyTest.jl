@@ -21,6 +21,7 @@ module EfficiencyTest
     include("SimpleFunctions/simplexnrm2.jl")
     include("SimpleFunctions/simplegemv.jl")
 
+    include("../src/BLAS_MC/Lin_Functions/form.jl")
     m1 = MC{3}(4.0, 5.0, IntervalType(4,7), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
     m2 = MC{3}(33.7,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
     m3 = MC{3}(4.0, 5.0, IntervalType(4, 5), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
@@ -34,7 +35,7 @@ module EfficiencyTest
     X = map(x -> M[x], ind[1:n])
     Y = map(x -> M[x], ind[n+1:2n])
 
-
+#=
 #DOT
     println("DOT efficiency")
 
@@ -73,7 +74,7 @@ module EfficiencyTest
     new, old1, old2 = minimum(run(bxscal)), minimum(run(bsxscal)), minimum(run(bdsxscal))
     println(judge(new, old1))
     println(judge(new, old2))
-
+=#
     #GEMV
     println("GEMV efficiency")
 
@@ -94,10 +95,10 @@ module EfficiencyTest
     println(judge(new, old2))
 
 #GBVM
+    println("GBMV efficiency")
     AB = copy(A)
     kl = 5 #Efficiency is very dependednt on the bandwidth
     ku = 4
-    AB = rand(M, m,n)
     MCzero = MC{3}(0.0,0.0)
     for i in 1:m #MAKE A a SPARSE BANDED HERE
         for j in 1:n
@@ -106,15 +107,71 @@ module EfficiencyTest
             end
         end
     end
-    include("../../src/BLAS_MC/Lin_Functions/form.jl")
     ABg = band(AB,m,n,ku,kl)
     bgbmv = @benchmarkable GBMV($TRANS, $m, $n, $kl, $ku, $alpha, $ABg, $x, $beta, $y)
     bdsgbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AB, $x, $beta, $y) #gemv is simple matrix mult,
     for b in [bgbmv, bdsgbmv]                                                           #So it is benchmark for all special matrix forms
         tune!(b)
     end
-    new, old = minimum(run(bgmbv)), minimum(run(bdsgbmv))
+    new, old = minimum(run(bgbmv)), minimum(run(bdsgbmv))
     println(judge(new, old))
 
+#SYMV
+println("SYMV efficiency")
+UPLO = "U"
+AS = copy(A)
+for i in 1:m #Make Symmetric (copy Upper to Lower)
+    for j in 1:n
+        if j < i
+            AS[i,j] = AS[j,i]
+        end
+    end
+end
+bsymv = @benchmarkable SYMV($UPLO, $n, $alpha, $AS, $x, $beta, $y)
+bdssymv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, $y) #gemv is simple matrix mult,
+for b in [bsymv, bdssymv]                                                           #So it is benchmark for all special matrix forms
+    tune!(b)
+end
+new, old = minimum(run(bgbmv)), minimum(run(bdssymv))
+println(judge(new, old))
+
+#SBMV
+println("SBMV efficiency")
+DIAG = "N"
+k = 5
+for i in 1:m #MAKE A a SPARSE BANDED HERE
+    for j in 1:n
+        if j<i-kl || j>i+ku
+            AS[i,j] = MCzero
+        end
+    end
+end
+ASu = sbandu(AS,m,n,k)
+bsbmv = @benchmarkable SBMV($UPLO, $n, $k, $alpha, $ASu, $x, $beta, $y)
+bdssbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, $y) #gemv is simple matrix mult,
+for b in [bsbmv, bdssbmv]                                                           #So it is benchmark for all special matrix forms
+    tune!(b)
+end
+new, old = minimum(run(bgbmv)), minimum(run(bdssbmv))
+println(judge(new, old))
+
+#TRMV
+println("TRMV efficiency")
+DIAG = "N" #Whether matrix is unit ("U") triag or not
+AT = copy(A)
+for i in 1:m #Make Upper Triangular
+    for j in 1:n
+        if j < i
+            AT[i,j] = MCzero
+        end
+    end
+end
+btrmv = @benchmarkable TRMV($UPLO, $TRANS, $DIAG, $n, $AT, $x)
+bdstrmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AT, $x, $beta, $y) #gemv is simple matrix mult,
+for b in [btrmv, bdstrmv]                                                           #So it is benchmark for all special matrix forms
+    tune!(b)
+end
+new, old = minimum(run(bgbmv)), minimum(run(bdstrmv))
+println(judge(new, old))
 
 end
