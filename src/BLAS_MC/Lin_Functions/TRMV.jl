@@ -13,7 +13,7 @@ MCzero::MC = MC{N}(0.0, 0.0)
 kx::Int =1
 ky::Int =1
 leny = length(x)
-x_2::Array{MC{N},1} = fill(MCzero, leny)  #Result vector
+x_2::Array{MC{N},1} = Array{MC{N},1}(undef, leny)  #Result vector
 for i in 1:leny
     x_2[i] = x[i]
 end

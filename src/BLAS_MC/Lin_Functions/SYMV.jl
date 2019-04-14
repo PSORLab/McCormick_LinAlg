@@ -17,7 +17,7 @@ MCzero::MC = MC{N}(0.0, 0.0)
 kx::Int =1
 ky::Int =1
 #Form beta*y
-y_2::Array{MC{N},1} = fill(MCzero, length(y)) #Result vector. dont want to solve in place of right now
+y_2::Array{MC{N},1} = Array{MC{N},1}(undef, length(y)) #Result vector. dont want to solve in place of right now
 if beta != 1#If 1 can ignore coefficient
 if beta == 0
     y_2 .= temp

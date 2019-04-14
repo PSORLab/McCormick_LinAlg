@@ -17,7 +17,7 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
            lenx = m
            leny = n
     end
-    y_2::Array{MC{N},1} = Array{MC{N},2}(undef, leny) #Result vector
+    y_2::Array{MC{N},1} = Array{MC{N},1}(undef, leny) #Result vector
 
     #form y_2 = beta*y
     if beta != 1#If 1 can ignore coefficient
