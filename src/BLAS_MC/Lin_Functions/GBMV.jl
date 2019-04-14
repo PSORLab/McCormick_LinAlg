@@ -5,6 +5,7 @@
 function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
     #Ignoring dimensional check flags for now, assuming inputs are correct
     temp::MC = MC{N}(0.0, 0.0)
+    MCzero::MC = MC{N}(0.0,0.0)
     if m==0 || n==0 || (alpha==0 && beta==0) #If returning real value, separate m,n==0 from alpha beta
         tempA::Array{MC{N},1} = [temp for ms in 1:m, ns in 1:n]
         return tempA
