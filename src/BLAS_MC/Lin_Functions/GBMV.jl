@@ -14,8 +14,8 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
            lenx::Int = n
            leny::Int = m
     else#Use transpose
-           lenx::Int = m
-           leny::Int = n
+           lenx = m
+           leny = n
     end
     y_2::Array{MC{N},1} = Array{MC{N},2}(undef, leny) #Result vector
 

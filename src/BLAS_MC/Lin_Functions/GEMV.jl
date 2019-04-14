@@ -16,8 +16,8 @@ function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, 
     temp::MC = MC{N}(0.0,0.0)#Could write this out so not to outsource init
     MCzero::MC = MC{N}(0.0,0.0)
     if TRANS == "N" #Do not use transpose
-           lenx = n
-           leny = m
+           lenx::Int = n
+           leny::Int = m
     else#Use transpose
            lenx = m
            leny = n
