@@ -10,8 +10,8 @@ DIAG = "U" if A is unit traingular (main diag is 1's)
 #Skip testing parameters
 MCzero::MC = MC{N}(0.0, 0.0)
 #Not using sparse vectors, assume incx,incy==1
-kx =1
-ky =1
+kx::Int =1
+ky::Int =1
 leny = length(x)
 x_2::Array{MC{N},1} = fill(MCzero, leny)  #Result vector
 for i in 1:leny

@@ -11,13 +11,13 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
         return tempA
     end
     if TRANS == "N" #Do not use transpose
-           lenx = n
-           leny = m
+           lenx::Int = n
+           leny::Int = m
     else#Use transpose
-           lenx = m
-           leny = n
+           lenx::Int = m
+           leny::Int = n
     end
-    y_2::Array{MC{N},1} = fill(MCzero, leny) #Result vector
+    y_2::Array{MC{N},1} = Array{MC{N},2}(undef, leny) #Result vector
 
     #form y_2 = beta*y
     if beta != 1#If 1 can ignore coefficient
@@ -31,7 +31,7 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
     if alpha == 0.0 # Second term disappears
         return y
     end
-    kup1 = ku + 1
+    kup1::Int = ku + 1
     #Vector Matrix multiply
     if TRANS == "N" #####Don't use transpose
         incx::Integer = 1

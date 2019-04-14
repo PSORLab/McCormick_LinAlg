@@ -5,10 +5,10 @@ function SBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC
  #ignore sparse vectors so kx,ky = 1
  MCzero::MC = MC{N}(0.0, 0.0)
  #Not using sparse vectors, assume incx,incy==1
- kx::Integer =1
- ky::Integer =1
+ kx::Int =1
+ ky::Int =1
  #Form beta*y
-y_2::Array{MC{N},1} = fill(MCzero, length(y)) #Result vector. dont want to solve in place of right now
+y_2::Array{MC{N},1} = Array{MC{N},2}(undef, length(y)) #Result vector. dont want to solve in place of right now
  if beta != 1#If 1 can ignore coefficient
     if beta == 0
         y_2 .= MCzero
@@ -23,7 +23,7 @@ y_2::Array{MC{N},1} = fill(MCzero, length(y)) #Result vector. dont want to solve
 
  temp1::MC = MCzero
  temp2::MC = MCzero
- l::Integer = 0
+ l::Int = 0
 
  if "U" == UPLO #use upper triangular of A
     kplus1 = k + 1

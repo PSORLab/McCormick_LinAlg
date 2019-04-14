@@ -10,11 +10,11 @@ DIAG = "U" if A is unit traingular (main diag is 1's)
 #Skip testing parameters
 MCzero::MC = MC{N}(0.0, 0.0)
 #Not using sparse vectors, assume incx,incy==1
-kx =1
-ky =1
+kx::Int =1
+ky::Int =1
 x_2::Array{MC{N},1} = x #Result vector. dont want to solve in place of right now
 temp::MC = MCzero
-nounit = (DIAG == "N")
+nounit::Bool = (DIAG == "N")
 
 if TRANS == "N" #A*x
 

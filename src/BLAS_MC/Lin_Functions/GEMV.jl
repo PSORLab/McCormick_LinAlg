@@ -23,7 +23,7 @@ function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, 
            leny = n
     end
     incx::Int, incy::Int = 1,1
-    y_2::Array{MC{N},1} = fill(MCzero, leny) #Result vector
+    y_2::Array{MC{N},1} = Array{MC{N},2}(undef, leny) #Result vector
     ###############form y_2 = beta*y
     if beta != 1#If 1 can ignore coefficient
     if beta == 0
