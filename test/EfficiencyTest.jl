@@ -35,7 +35,7 @@ module EfficiencyTest
     X = map(x -> M[x], ind[1:n])
     Y = map(x -> M[x], ind[n+1:2n])
 
-#=
+
 #DOT
     println("DOT efficiency")
 
@@ -74,7 +74,7 @@ module EfficiencyTest
     new, old1, old2 = minimum(run(bxscal)), minimum(run(bsxscal)), minimum(run(bdsxscal))
     println(judge(new, old1))
     println(judge(new, old2))
-=#
+
     #GEMV
     println("GEMV efficiency")
 

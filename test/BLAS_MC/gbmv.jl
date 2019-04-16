@@ -31,7 +31,7 @@ x = rand(M, n)
 y_ = rand(M, m)
 alpha, beta = 2.0, 6.1
 TRANS = "N"
-include("../src/BLAS_MC/Lin_Functions/form.jl")
+include("../../src/BLAS_MC/Lin_Functions/form.jl")
 A = band(AF,m,n,ku,kl)
 
 y = GBMV(TRANS, m, n, kl, ku, alpha,  A, x, beta, y_) #Cheesey test, make unique solutions

@@ -8,16 +8,16 @@ module Check_BLAS_MC
     using Random
 
 #BLAS Level 1
-    include("dot.jl")
-    include("xscal.jl")
-    include("saxpy.jl")
-    include("xnrm2.jl")
+    include("BLAS_MC/dot.jl")
+    include("BLAS_MC/xscal.jl")
+    include("BLAS_MC/saxpy.jl")
+    include("BLAS_MC/xnrm2.jl")
 #BLAS Level 2
-    include("gemv.jl")
-    include("gbmv.jl")
-    include("symv.jl")
-    include("sbmv.jl")
-    include("trmv.jl")
+    include("BLAS_MC/gemv.jl")
+    include("BLAS_MC/gbmv.jl")
+    include("BLAS_MC/symv.jl")
+    include("BLAS_MC/sbmv.jl")
+    include("BLAS_MC/trmv.jl")
     #include("tbmv.jl") #Not made yet
 #BLAS Level 3
 end

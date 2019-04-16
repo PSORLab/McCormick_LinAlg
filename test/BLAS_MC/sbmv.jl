@@ -32,7 +32,7 @@ for i in 1:m #Make Symmetric (copy Upper to Lower)
         end
     end
 end
-include("../src/BLAS_MC/Lin_Functions/form.jl")
+include("../../src/BLAS_MC/Lin_Functions/form.jl")
 A = sbandu(AF,m,n,k) #AF is reformatted to a banded matrix storage form fit for this function
 
 x = rand(M, n)
