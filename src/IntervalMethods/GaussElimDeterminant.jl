@@ -1,50 +1,35 @@
 #This function estimates bounds on the determinate of an interval matrix
 # by applying gaussian elimination
-using IntervalArithmetic
-function dual(Inter::Interval) # E. Kaucher, Interval analysis in the extended interval space IR, Computing, Suppl., 2 (1980), 33-49, doi: 10.1007/978-3-7091-8577-3
-      return Interval(Inter.hi, Inter.lo)
-end
-function dualsub(Inter1, Inter2)
-      return Interval(Inter1.lo - Inter2.lo, Inter1.hi-Inter2.hi)
-end
-function dualdiv(Inter1, Inter2)
-      return Inter1 / dual(Inter2)
-end
-function test()
-Intzero::Interval = Interval(0.0,0.0)
-Am = [1. 2. 3.
-      4. 6. 7.
-      5. 9. 8.]
-r1 = .1
-r2 = .01
-A_ = map(x->IntervalType(x-r1, x+r1), Am) #Interval Matrix
-HULL = [[4.060, 14.880] [8.465, 9.545]]
-#Begin upper-trianglulating the matrix
-(m, n) = size(A_);
-detf::Float64 = 1 #Accumulated determinatn factor
-A_kplus1 = copy(A_)
-A_k = copy(A_)
+function gaussdet(A)
+(m, n) = size(A);
+#Best Method
+A_kplus1 = copy(A)
+A_k = copy(A)
+#Closer to paper's values
 for k = 1:(n-1) #From A NEW CRITERION TO GUARANTEE THE FEASIBILITY OF THE INTERVAL GAUSSIAN ALGORITHM*, A. FROMMERf AND G. MAYER
       for i = 1:n
             for j = 1:n#Assume A is nxn
                   if 1<=i<=k && 1<=j<=n
                   elseif (k+1)<=i<=(k+n) && (k+1)<=j<=(k+n)
-                        A_kplus1[i,j] -= (A_[i,k]*A_[k,j])/A_[k,k]
+                        A_kplus1[i,j] -= (A_k[i,k]*A_k[k,j])/A_k[k,k]
                   else
                         A_kplus1[i,j] = 0
                   end
             end
       end
-      A_ = A_kplus1
+      A_k = A_kplus1
 end
 
-Ad = copy(A_)
+#Bounds are much tighter than expected
+Ad::Array{Interval{Float64},2} = copy(A)
+pivotval::Interval{Float64} = Interval(0.0, 0.0)
 for i = 1:n #Assume A is nxn. No row swapping as of yet
       if Ad[i,i] != Intzero #As long as the current pivot isn't 0
           pivotval = Ad[i,i];
           for row=i:(m-1) #Row subtracts pivot from below to make it a true pivot column
               if Ad[row+1,i] != 0#if the next col isnt 0
-                   Ad[row+1,:] = dualsub(Ad[row+1,:], Ad[row+1,i] * dualdiv(Ad[i,:] / pivotval)); #Translates to newrow = oldrow - (pivot scaled to elimate pivot column)
+                    #println(i, " ", row)
+                   Ad[row+1,:] = dualsub(Ad[row+1,:], Ad[row+1,i] * dualdiv(Ad[i,:], pivotval)); #Translates to newrow = oldrow - (pivot scaled to elimate pivot column)
               end #Using dual from T. Nirmala1, D. Datta2, H.S. Kushwaha3, K. Ganesan4 §
           end
       end
@@ -77,12 +62,15 @@ for i=1:m #checks every row
     end
 end
 =#
-det_::Interval = A_[1,1]
+#println()
+#println()
+#display(Ad)
+#display(A_k)
 detd::Interval = Ad[1,1]
+det_k::Interval = A_k[1,1]
 for i = 2:n
-      det_ *= A_[i,i]
       detd *= Ad[i,i]
+      det_k *= A_k[i,i]
 end
- return A_, det, Ad, detd
+ return detd, det_k
 end
-A_, det, Ad, detd = test()
