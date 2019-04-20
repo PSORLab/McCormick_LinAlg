@@ -1,35 +1,5 @@
 
-function solve(A_,b_) #Solve Ax=b
-      (n,m) = size(A_)#Assumed to be square. Also no interval contains 0
-      #println(n)
-      A = copy(A_)
-      b = copy(b_)
-      #display(A)
-      #display(b)
-      Intzero::Interval = Interval(0.0,0.0)
-      x::Array{Interval, 1} = fill(Intzero, n)
-      for i = 1:n#Forward sub
-            for j = (i+1):n
-                  m = A[j,i]/A[i,i]
-                  for k = i:n
-                        A[j,k] = A[j,k] - m * A[i,k]
-                        b[j] = b[j] - m * b[i]
-                  end
-            end
-      end
-      s::Interval = Intzero
-      for i = 1:n #Backwards sub
-            s = Intzero
-            for j = 1:n
-                  s += A[i,j]*x[j]
-            end
-            x[i] = (b[i]-s) / A[i,i]
-      end
-
-      return x
-end
-
-function CRAMinvdet(A)#Lower bound seems too good to be true. Above HULL from paper
+function craminvdet(A)#Lower bound seems too good to be true. Above HULL from paper
 Intzero::Interval = Interval(0.0,0.0)
 (n,m) = size(A)
 Am = map(x->(x.lo+x.hi)/2, A)# Midpoint Matrix for preconditioning

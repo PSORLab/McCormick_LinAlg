@@ -1,10 +1,5 @@
 #Not perfect. Also useless because it does not guarentee a sign for the det.
-function HADinv(A::Array{Interval{Float64},2})
-    Am = map(x->(x.lo+x.hi)/2, A)# Midpoint Matrix for preconditioning
-    Am_inv = inv(Am)
-    detAm_inv = det(Am_inv)
-    A = A * Am_inv #Preconditioning step
-
+function HAD(A::Array{Interval{Float64},2})
     (m,n) = size(A)
     Int_1 = Interval(1.,1.)
     deth::Interval = Interval(1.,1.)
@@ -18,6 +13,6 @@ function HADinv(A::Array{Interval{Float64},2})
         deth = deth * colnorm
     end
     d = max(abs(deth.lo), abs(deth.hi))#Take max abs value of interval for bounds on deth
-    deth = Interval(-d, d) / detAm_inv
+    deth = Interval(-d,d)
     return deth
 end

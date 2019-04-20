@@ -2,7 +2,6 @@
 # by applying gaussian elimination
 function gaussdet(A)
 (m, n) = size(A);
-#Best Method
 A_kplus1 = copy(A)
 A_k = copy(A)
 #Closer to paper's values
