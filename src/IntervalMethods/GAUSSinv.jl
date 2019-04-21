@@ -9,7 +9,7 @@ Intzero::Interval = Interval(0.0,0.0)
 Am = map(x->(x.lo+x.hi)/2, A)# Midpoint Matrix for preconditioning
 Am_inv = inv(Am)
 detAm_inv = det(Am_inv)
-A_k = A * Am_inv #Preconditioning step
+A_k = Am_inv * A #Preconditioning step
 A_kplus1 = copy(A_k)
 Ad = copy(A_k)
 #This way is closer to paper's values

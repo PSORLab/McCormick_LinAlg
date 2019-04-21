@@ -29,7 +29,7 @@ function dualdiv(Inter1::Array{Interval,1}, Inter2::Interval)
       return Inter1 / dual(Inter2)
 end
 #Linear Solver using forward+back substitution
-function solve(A_::Array{Interval{Float64},2},b_::Array{Interval{Float64},1}) #Solve Ax=b
+function solve(A_::Array{Interval{T},2},b_::Array{Interval{T},1}) where T<:Real #Solve Ax=b
       (n,m) = size(A_)
       A = copy(A_)
       b = copy(b_)
@@ -40,37 +40,75 @@ function solve(A_::Array{Interval{Float64},2},b_::Array{Interval{Float64},1}) #S
                   m = A[j,i]/A[i,i]
                   for k = i:n
                         A[j,k] = A[j,k] - m * A[i,k]
-                        b[j] = b[j] - m * b[i]
                   end
+                  b[j] = b[j] - m * b[i]
             end
       end
       s::Interval = Intzero
-      for i = 1:n #Backwards sub
+      for i = n:-1:1 #Backwards sub
             s = Intzero
             for j = 1:n
                   s += A[i,j]*x[j]
             end
+            #=println("Here")
+            display(x[i])
+            display(b[i])
+            display(A[i,i]) =#
             x[i] = (b[i]-s) / A[i,i]
       end
 
       return x
 end
+function solve2(A_::Array{Interval{T},2},b_::Array{Interval{T},1}) where T<:Real #Solve Ax=b
+      (m, n) = size(A_);
+      A_kplus1 = copy(A_)
+      A_k = copy(A_)
+      b_kplus1 = copy(b_)
+      b_k = copy(b_)
+      Intzero = Interval(0.0, 0.0)
+      for k = 1:(n-1) #From A NEW CRITERION TO GUARANTEE THE FEASIBILITY OF THE INTERVAL GAUSSIAN ALGORITHM*, A. FROMMERf AND G. MAYER
+            for i = 1:n #Consider Pivot Tightening?
+                  for j = 1:n#Assume A is nxn
+                        if 1<=i<=k && 1<=j<=n
+                        elseif (k+1)<=i<=n && (k+1)<=j<=n
+                              A_kplus1[i,j] = A_k[i,j] - (A_k[i,k]*A_k[k,j])/A_k[k,k]
+                              b_kplus1[i] = b_k[i] - (A_k[i,k]*b_k[k])/A_k[k,k]
+                        else
+                              A_kplus1[i,j] = Intzero
+                        end
+                  end
+            end
+            A_k = A_kplus1
+            b_k = b_kplus1
+      end
+      x::Array{Interval{T}, 1} = copy(b_k)
+      for i = n:-1:1
+            s = Intzero
+            for j = (i+1):n
+                  s += A_k[i,j]*x[j]
+            end
+            x[i] = (b_k[i] - s)/A_k[i,i]
+      end
+      return x
+end
+
 function solve(A_::Array{Float64,2}, b_::Array{Float64,1}) #Solve Ax=b
       (n,m) = size(A_)
       A = copy(A_)
       b = copy(b_)
+      display(b)
       x::Array{Float64, 1} = fill(0, n)
       for i = 1:n#Forward sub
             for j = (i+1):n
                   m = A[j,i]/A[i,i]
                   for k = i:n
                         A[j,k] = A[j,k] - m * A[i,k]
-                        b[j] = b[j] - m * b[i]
                   end
+                  b[j] = b[j] - m * b[i]
             end
       end
       s::Float64 = 0.0
-      for i = 1:n #Backwards sub
+      for i = n:-1:1 #Backwards sub
             s = 0.0
             for j = 1:n
                   s += A[i,j]*x[j]
@@ -80,13 +118,60 @@ function solve(A_::Array{Float64,2}, b_::Array{Float64,1}) #Solve Ax=b
 
       return x
 end
-
-function solve2(A,b)
-      A_ = copy(A)
-      b_ = copy(b)
-      Am = map(x->(x.lo+x.hi)/2, A_)
-      bm = map(x->(x.lo+x.hi)/2, b_)
-
-      y = inv(Am) * bm #Approx solution
-      Az = b_ - A_*y #Solve for z, may need part 1 of this paper
+# m(a) = mid(a)), w = width = diam(a).
+function intadd(a::Interval{T}, b::Interval{T}) where T<: Real #Real numbers should be treated as degenerate interval
+      mab = mid(a) + mid(b)
+      k = ((b.hi+a.hi) - (b.lo+a.lo))/2
+      return Interval(mab-k, mab + k)
+end
+function intsub(a::Interval{T}, b::Interval{T}) where T<: Real
+      if a == b
+            #a-b = a-dual(a) = [0.0]
+            return Interval(0.0,0.0)
+      else
+            mab = mid(a) - mid(b)
+            k = ((b.hi+a.hi) - (b.lo+a.lo))/2
+            return Interval(mab-k, mab + k)
+      end
+end
+function intsub(Inter1::Array{Interval{T},1}, Inter2::Array{Interval{T},1}) where T <: Real
+      result::Array{Interval{T},1} = []
+      for i in 1:length(Inter1)
+            push!(result, intsub(Inter1[i], Inter2[i]))
+      end
+      return result
+end
+function intmult(a::Interval{T}, b::Interval{T}) where T<: Real
+      ab = a*b
+      mab = mid(a) * mid(b)
+      (alpha, beta) = (ab.lo, ab.hi)
+      k = min(mab - alpha, beta - mab)
+      return Interval(mab-k, mab + k)
+end
+function intmult(Inter1::Array{Interval{T},1}, Inter2::Interval{T}) where T <: Real
+      result::Array{Interval{T},1} = []
+      for i in Inter1
+            push!(result, intmult(i, Inter2))
+      end
+      return result
+end
+function intdiv(a::Interval{T}, b::Interval{T}) where T<: Real
+      if b.lo*b.hi <= 0
+            return "Zero In Denominator"#Should raise error
+      end
+      if a == b
+            #a/b = a/dual(a) = 1
+            return Interval(1,1)
+      else
+            blo, bhi = b.lo, b.hi
+            k = min((1/bhi)*((bhi-blo)/(blo+bhi)), (1/blo)*((bhi-blo)/(blo+bhi)))
+            return intmult(a, Interval((1/mid(b))-k, (1/mid(b)) + k))
+      end
+end
+function intdiv(Inter1::Array{Interval{T},1}, Inter2::Interval{T}) where T <: Real
+      result::Array{Interval{T},1} = []
+      for i in Inter1
+            push!(result, intdiv(i, Inter2))
+      end
+      return result
 end

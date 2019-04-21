@@ -3,7 +3,7 @@ function HADinv(A::Array{Interval{Float64},2})
     Am = map(x->(x.lo+x.hi)/2, A)# Midpoint Matrix for preconditioning
     Am_inv = inv(Am)
     detAm_inv = det(Am_inv)
-    A = A * Am_inv #Preconditioning step
+    A = Am_inv * A #Preconditioning step
 
     (m,n) = size(A)
     Int_1 = Interval(1.,1.)
