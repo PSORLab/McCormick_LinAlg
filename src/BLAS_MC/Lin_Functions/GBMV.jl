@@ -6,16 +6,16 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
     #Ignoring dimensional check flags for now, assuming inputs are correct
     temp::MC = MC{N}(0.0, 0.0)
     MCzero::MC = MC{N}(0.0,0.0)
-    if m==0 || n==0 || (alpha==0 && beta==0) #If returning real value, separate m,n==0 from alpha beta
-        tempA::Array{MC{N},1} = [temp for ms in 1:m, ns in 1:n]
-        return tempA
-    end
     if TRANS == "N" #Do not use transpose
            lenx::Int = n
            leny::Int = m
     else#Use transpose
            lenx = m
            leny = n
+    end
+    if m==0 || n==0 || (alpha==0 && beta==0) #If returning real value, separate m,n==0 from alpha beta
+        tempA::Array{MC{N},1} = fill(temp, leny)::Array{MC{N},1}#[temp for ms in 1:m, ns in 1:n]
+        return tempA
     end
     y_2::Array{MC{N},1} = Array{MC{N},1}(undef, leny) #Result vector
 

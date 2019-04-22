@@ -16,11 +16,12 @@ MCzero::MC = MC{N}(0.0, 0.0)
 #Not using sparse vectors, assume incx,incy==1
 kx::Int =1
 ky::Int =1
+temp1::MC = MCzero
 #Form beta*y
 y_2::Array{MC{N},1} = Array{MC{N},1}(undef, length(y)) #Result vector. dont want to solve in place of right now
 if beta != 1#If 1 can ignore coefficient
 if beta == 0
-    y_2 .= temp
+    y_2 .= temp1
 else
     y_2[:] = XSCAL(beta, y)[:]#May replace this
 end
@@ -29,7 +30,6 @@ end
 if alpha==0
     return y_2
 end
-temp1::MC = MCzero
 temp2::MC = MCzero
 
 if "U" == UPLO #Use upper triangular of A

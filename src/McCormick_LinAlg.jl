@@ -17,12 +17,11 @@ module McCormick_LinAlg
     include("BLAS_MC/Lin_Functions/SYMV.jl")
     include("BLAS_MC/Lin_Functions/SBMV.jl")
     include("BLAS_MC/Lin_Functions/TRMV.jl")
-    source = pwd()
+    source = @__DIR__
     function testcorrectness()              #This is calling from current working directory, not source of file
-        include(source * "/../test/BLAS_MCtest.jl") #There was a trick to find package location in MathOptInt for this kind of call
+        include(source * "\\..\\test\\BLAS_MCtest.jl") #There was a trick to find package location in MathOptInt for this kind of call
     end
     function testefficiency()
-        include(source * "/../test/EfficiencyTest")
+        include(source * "\\..\\test\\EfficiencyTest")
     end
-
 end

@@ -29,7 +29,7 @@ module EfficiencyTest
     a = 6.3
 
     M = [m1,m2,m3,m4]
-    Random.seed!(0)
+    Random.seed!(0);
     n = 50 #Vector Size for all testing
     ind = rand(1:4, n*2)
     X = map(x -> M[x], ind[1:n])
@@ -132,13 +132,13 @@ bdssymv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, 
 for b in [bsymv, bdssymv]                                                           #So it is benchmark for all special matrix forms
     tune!(b)
 end
-new, old = minimum(run(bgbmv)), minimum(run(bdssymv))
+new, old = minimum(run(bsymv)), minimum(run(bdssymv))
 println(judge(new, old))
 
 #SBMV
 println("SBMV efficiency")
 DIAG = "N"
-k = 5
+k = 2
 for i in 1:m #MAKE A a SPARSE BANDED HERE
     for j in 1:n
         if j<i-kl || j>i+ku
@@ -152,7 +152,7 @@ bdssbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, 
 for b in [bsbmv, bdssbmv]                                                           #So it is benchmark for all special matrix forms
     tune!(b)
 end
-new, old = minimum(run(bgbmv)), minimum(run(bdssbmv))
+new, old = minimum(run(bsbmv)), minimum(run(bdssbmv))
 println(judge(new, old))
 
 #TRMV
@@ -171,7 +171,7 @@ bdstrmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AT, $x, $beta, 
 for b in [btrmv, bdstrmv]                                                           #So it is benchmark for all special matrix forms
     tune!(b)
 end
-new, old = minimum(run(bgbmv)), minimum(run(bdstrmv))
+new, old = minimum(run(btrmv)), minimum(run(bdstrmv))
 println(judge(new, old))
 
 end

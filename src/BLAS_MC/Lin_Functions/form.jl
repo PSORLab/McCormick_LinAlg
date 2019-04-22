@@ -1,6 +1,6 @@
 #Functions to take matrices from full storage to X - style storage
 
-function band(AF::Array{MC{N},2},m,n,ku,kl) where N
+function band(AF::Array{MC{N},2},m,n,ku,kl) where N #undef makes messy matrix with e-300 instead of 0's
     AB::Array{MC{N},2} = Array{MC{N}}(undef, m,n) #looks messy with undef values isntead of 0's
     for j = 1:n
         k = ku + 1 - j

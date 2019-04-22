@@ -18,4 +18,17 @@ TrialJudgement(-10.92% => improvement)
 #####################
 using @inbounds on SAXPY had no effect. Wrapping GEMV in a begin+@inbounds results in 1.56% improvement
 
+4/21/19 - Matrix mult not optimized
+GEMV efficiency
+TrialJudgement(-30.59% => improvement)
+GBMV efficiency
+TrialJudgement(+13.51% => regression)
+SYMV efficiency
+TrialJudgement(+0.66% => invariant)
+SBMV efficiency
+TrialJudgement(+13.88% => regression)
+TRMV efficiency
+TrialJudgement(+8.01% => regression)
+
+
 =#

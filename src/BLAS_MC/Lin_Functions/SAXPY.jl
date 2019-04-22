@@ -23,7 +23,7 @@ function SAXPY(scal::Float64, X::Array{MC{N},1}, Y::Array{MC{N},1}) where N #whe
                             cc = scal * x.cc      + y.cc
                             cv = scal * x.cv      + y.cv
                             cnst = x.cnst && y.cnst
-                            for ip in range(1, N) #added length. Do same 5peat here?
+                            for ip in 1:N #added length. Do same 5peat here?
                                         cc_grad[ip] = scal * x.cc_grad[ip] + y.cc_grad[ip]
                                         cv_grad[ip] = scal * x.cv_grad[ip] + y.cv_grad[ip]
                             end
