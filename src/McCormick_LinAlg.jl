@@ -22,6 +22,6 @@ module McCormick_LinAlg
         include(source * "\\..\\test\\BLAS_MCtest.jl") #There was a trick to find package location in MathOptInt for this kind of call
     end
     function testefficiency()
-        include(source * "\\..\\test\\EfficiencyTest")
+        include(source * "\\..\\test\\EfficiencyTest.jl")
     end
 end
