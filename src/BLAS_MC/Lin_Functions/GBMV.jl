@@ -1,7 +1,5 @@
 #Based on the BLAS implementation of GBMV
 
-#Not including parameters LDA, INCX, INCY. So no sparse vectors.
-
 function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
     #Ignoring dimensional check flags for now, assuming inputs are correct
     temp::MC = MC{N}(0.0, 0.0)
