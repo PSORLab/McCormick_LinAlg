@@ -4,7 +4,7 @@ module EfficiencyTest
     using Compat.Test
     using BenchmarkTools
     import BenchmarkTools.minimum
-    using StaticArrays
+    using StaticArrays ,SparseArrays
     using EAGO #Should be dependent in LinAlg So idk why MC not defined
     using McCormick_LinAlg
     using Random
@@ -107,14 +107,35 @@ module EfficiencyTest
             end
         end
     end
+
+    MCrows = []
+    MCcols = []
+    ABs_ = []
+    for i in 1:n
+           for j in 1:n
+           if AB[i,j] != MCzero
+               push!(ABs_, AB[i,j])
+               push!(MCrows, i)
+               push!(MCcols, j)
+           end
+        end
+    end
+    ABs = sparse(MCcols, MCrows, ABs_)
+    ABs = SparseMatrixCSC{MC{3}, Int64}(ABs)
     ABg = band(AB,m,n,ku,kl)
+
+    bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ABs, $x, $beta, $y)
+    #bdsgbmvs = @benchmarkable deadsimplegbmvs($TRANS, $alpha, $ABs, $x, $beta, $y)
     bgbmv = @benchmarkable GBMV($TRANS, $m, $n, $kl, $ku, $alpha, $ABg, $x, $beta, $y)
     bdsgbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AB, $x, $beta, $y) #gemv is simple matrix mult,
-    for b in [bgbmv, bdsgbmv]                                                           #So it is benchmark for all special matrix forms
+    for b in [bgbmv, bdsgbmv, bgbmvs]#, bdsgbmvs]                                                           #So it is benchmark for all special matrix forms
         tune!(b)
     end
-    new, old = minimum(run(bgbmv)), minimum(run(bdsgbmv))
+    new, old, sp#=, oldsp =#= minimum(run(bgbmv)), minimum(run(bdsgbmv)), minimum(run(bgbmvs))#, minimum(run(bdsgbmvs))
     println(judge(new, old))
+    println("SparseArray")
+    println(judge(sp, old))
+    #println(judge(sp, oldsp))
 
 #SYMV
 println("SYMV efficiency")

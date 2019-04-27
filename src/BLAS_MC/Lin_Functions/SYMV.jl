@@ -12,7 +12,7 @@ function SYMV(UPLO::String, n::Integer, alpha::Float64,  A::Array{MC{N},2}, x::A
        is to be referenced.
        =#
 #Skip testing parameters
-MCzero::MC = MC{N}(0.0, 0.0)
+MCzero::MC = zero(MC{N})
 #Not using sparse vectors, assume incx,incy==1
 kx::Int =1
 ky::Int =1

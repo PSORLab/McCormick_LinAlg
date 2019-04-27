@@ -15,7 +15,7 @@ function DOT(X::Array{MC{N},1},Y::Array{MC{N},1}) where N #x,y E(Vector(MC{N})) 
     cum_cvgrad::Vector{Float64} .= 0
     cum_cnst::Bool = 1
 
-    temp1::MC = MC{1}(0.0,0.0)
+    temp1::MC = zero(MC{N})
     temp2::MC = copy(temp1) #can run first part of loop out here, and make sure pointers arent changing while running loops
     temp3::MC = copy(temp1) #maybe just start accounting for mod 5 at m+1. Unlikely systems are designed in mod5 anyway
     temp4::MC = copy(temp1)

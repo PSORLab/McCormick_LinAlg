@@ -19,7 +19,7 @@ n = 10
 kl = 2
 ku = 3
 AF = rand(M, m,n)
-MCzero = MC{3}(0.0,0.0)
+MCzero = zero(MC{N})
 for i in 1:m #MAKE A a SPARSE BANDED HERE
     for j in 1:n
         if j<i-kl || j>i+ku

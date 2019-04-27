@@ -5,7 +5,7 @@
 function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
     #Ignoring dimensional check flags for now, assuming inputs are correct
     temp::MC = MC{N}(0.0, 0.0)
-    MCzero::MC = MC{N}(0.0,0.0)
+    MCzero::MC = zero(MC{N})
     if TRANS == "N" #Do not use transpose
            lenx::Int = n
            leny::Int = m
@@ -59,4 +59,43 @@ function GBMV(TRANS::String, m::Integer, n::Integer, kl::Integer, ku::Integer, a
         end
     end
     return y_2
+end
+
+#For SparseArrays
+function GBMVs(TRANS::String, alpha::Float64, A::SparseMatrixCSC{MC{N},Int64}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N #A is a sparse matrix
+    nzv = A.nzval
+    rv = A.rowval
+    if TRANS == "N" #Do not use transpose
+           lenx = A.n
+           leny = A.m
+    else#Use transpose
+           lenx = A.m
+           leny = A.n
+    end
+    y_::Array{MC{N},1} = copy(y)
+    if beta != 1
+        if beta != 0
+            y_ = XSCAL!(beta, y_)
+        else
+            y_ = fill(y_, zero(eltype(y_)))
+        end
+    end
+    #println(y_)
+    if TRANS == "N"
+        for col = 1:A.n
+            axj = alpha*x[col]
+            for j = A.colptr[col]:(A.colptr[col + 1] - 1)
+                y_[rv[j]] += nzv[j]*axj
+            end
+        end
+    else
+        for col = 1:A.n
+            temp = MCzero
+            for j = A.colptr[col]:(A.colptr[col + 1] - 1)
+                temp += nzv[j]*x[rv[j]]
+            end
+            y_[col] += alpha * temp
+        end
+    end
+    return y_
 end

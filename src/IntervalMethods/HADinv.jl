@@ -4,20 +4,18 @@ function HADinv(A::Array{Interval{Float64},2})
     Am_inv = inv(Am)
     detAm_inv = det(Am_inv)
     A = Am_inv * A #Preconditioning step
-
     (m,n) = size(A)
     Int_1 = Interval(1.,1.)
-    deth::Interval = Interval(1.,1.)
-    colnorm::Interval = Int_1
-    for j = 1:n
-        colnorm = Int_1
+    colnorm::Float64 = 1.0
+    d::Float64 = 1.0
+    for j = 1:n #Product of Interval Eucl Norm of each column
+        colnorm = 1.0
         for i = 1:n #Assume square matrix
-            colnorm += A[i,j]^2
+            colnorm += mag(A[i,j])^2
         end
-        colnorm = sqrt(colnorm) #Is this a defined function for IntervalArith?
-        deth = deth * colnorm
+        colnorm = sqrt(colnorm)
+        d *= colnorm
     end
-    d = max(abs(deth.lo), abs(deth.hi))#Take max abs value of interval for bounds on deth
-    deth = Interval(-d, d) / detAm_inv
+    deth::Interval = Interval(-d,d) / detAm_inv
     return deth
 end

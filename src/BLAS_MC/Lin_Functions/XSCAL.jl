@@ -45,3 +45,46 @@ function XSCAL(scal::Float64, MCv::Array{MC{N},1}) where N #where A<:AbstractArr
         end
         return MCvtemp #Type = Vector
 end
+
+function XSCAL!(scal::Float64, MCv::Array{MC{N},1}) where N #where A<:AbstractArray #MC = single MC object, scal = Float64
+    #N::Int = length(MCv[1].cc_grad)
+    n::Int = length(MCv)
+    lo::Float64 = 0.0
+    hi::Float64 = 0.0
+    cc::Float64 = 0.0
+    cc_grad = Vector{Float64}(undef, N) #Still need to add mod5 loops for this function
+    cv_grad = Vector{Float64}(undef, N)
+    cnst::Bool = true
+    x::MC = MC{1}(0.0, 0.0) #Can still do first loop here, this is a time sink
+
+        if scal >= 0
+                    for i in 1:n
+                            x = MCv[i]
+                            lo = scal * x.Intv.lo
+                            hi = scal * x.Intv.hi
+                            cc = scal * x.cc
+                            cv = scal * x.cv
+                            cnst = x.cnst
+                            for ip in 1:N #added length
+                                        cc_grad[ip] = scal * x.cc_grad[ip]
+                                        cv_grad[ip] = scal * x.cv_grad[ip]
+                            end
+                            MCv[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
+                    end
+        else
+                    for i in 1:n
+                            x = MCv[i]
+                            lo = scal * x.Intv.hi
+                            hi = scal * x.Intv.lo
+                            cc = scal * x.cv
+                            cv = scal * x.cc
+                            cnst = x.cnst
+                            for ip in 1:N
+                                            cc_grad[ip] = scal * x.cv_grad[ip]
+                                            cv_grad[ip] = scal * x.cc_grad[ip]
+                            end
+                            MCv[i] = MC{N}(cv,cc,IntervalType(lo,hi),SVector{N,Float64}(cv_grad), SVector{N,Float64}(cc_grad),cnst)
+                    end
+        end
+        return MCv #Type = Vector
+end

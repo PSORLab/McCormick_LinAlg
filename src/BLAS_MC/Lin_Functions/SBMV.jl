@@ -1,9 +1,8 @@
 #Symmetric Banded Matrix vector product
-#Not functional
 function SBMV(UPLO::String, n::Integer, k::Integer, alpha::Float64,  A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
  #ignoring parameter check
  #ignore sparse vectors so kx,ky = 1
- MCzero::MC = MC{N}(0.0, 0.0)
+ MCzero::MC = zero(MC{N})
  #Not using sparse vectors, assume incx,incy==1
  kx::Int =1
  ky::Int =1
@@ -53,4 +52,44 @@ else #Use lower tringular of A
     end
 end
 return y_2
+end
+
+#Still a copy of GBMV right now. Can it get better though if in full storage?
+function SBMVs(alpha::Float64, A::SparseMatrixCSC{MC{N},Int64}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N #A is a sparse matrix
+    nzv = A.nzval
+    rv = A.rowval
+    if TRANS == "N" #Do not use transpose
+           lenx = A.n
+           leny = A.m
+    else#Use transpose
+           lenx = A.m
+           leny = A.n
+    end
+    y_::Array{MC{N},1} = copy(y)
+    if beta != 1
+        if beta != 0
+            y_ = XSCAL!(beta, y_)
+        else
+            y_ = fill(y_, zero(eltype(y_)))
+        end
+    end
+    #println(y_)
+#    if TRANS == "N"
+        for col = 1:A.n
+            axj = alpha*x[col]
+            for j = A.colptr[col]:(A.colptr[col + 1] - 1)
+                y_[rv[j]] += nzv[j]*axj
+            end
+        end
+#    else
+#=        for col = 1:A.n
+            temp = MCzero
+            for j = A.colptr[col]:(A.colptr[col + 1] - 1)
+                temp += nzv[j]*x[rv[j]]
+            end
+            y_[col] += alpha * temp
+        end
+        =#
+#    end
+    return y_
 end

@@ -14,7 +14,7 @@ LDA ::Int
 function GEMV(TRANS::String, m::Int, n::Int, alpha::Float64, A::Array{MC{N},2}, x::Array{MC{N},1}, beta::Float64, y::Array{MC{N},1}) where N
 #test of parameter correctness skipped\
     temp::MC = MC{N}(0.0,0.0)#Could write this out so not to outsource init
-    MCzero::MC = MC{N}(0.0,0.0)
+    MCzero::MC = zero(MC{N})
     if TRANS == "N" #Do not use transpose
            lenx::Int = n
            leny::Int = m

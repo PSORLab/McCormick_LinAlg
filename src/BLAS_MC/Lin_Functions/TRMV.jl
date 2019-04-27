@@ -8,7 +8,7 @@ DIAG = "U" if A is unit traingular (main diag is 1's)
      = "N" if not assumed
        =#
 #Skip testing parameters
-MCzero::MC = MC{N}(0.0, 0.0)
+MCzero::MC = zero(MC{N})
 #Not using sparse vectors, assume incx,incy==1
 kx::Int =1
 ky::Int =1

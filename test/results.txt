@@ -2,33 +2,27 @@
 
 Removing GLOBAL statements and removing type declarations to pre-allocations outside loops:
 With arrays of ~ elements=50
- v1.1 - ajryz
+#####################
+using @inbounds on SAXPY had no effect. Wrapping GEMV in a begin+@inbounds resulted in 1.56% improvement
+ -4zhuv
 DOT efficiency
-TrialJudgement(-2.74% => invariant)
-TrialJudgement(-16.05% => improvement)
+TrialJudgement(-1.39% => invariant)
+TrialJudgement(-14.90% => improvement)
 SAXPY efficiency
-TrialJudgement(-56.55% => improvement)
-TrialJudgement(-48.57% => improvement)
+TrialJudgement(-57.37% => improvement)
+TrialJudgement(-49.38% => improvement)
 XSCAL efficiency
 TrialJudgement(-30.56% => improvement)
 TrialJudgement(-10.71% => improvement)
 GEMV efficiency
-TrialJudgement(-10.92% => improvement)
-
-#####################
-using @inbounds on SAXPY had no effect. Wrapping GEMV in a begin+@inbounds results in 1.56% improvement
-
-4/21/19 - Matrix mult not optimized
-GEMV efficiency
-TrialJudgement(-30.59% => improvement)
+TrialJudgement(-24.96% => improvement)
 GBMV efficiency
-TrialJudgement(+13.51% => regression)
+TrialJudgement(-81.60% => improvement)
 SYMV efficiency
-TrialJudgement(+0.66% => invariant)
+TrialJudgement(-18.51% => improvement)
 SBMV efficiency
-TrialJudgement(+13.88% => regression)
+TrialJudgement(-88.52% => improvement)
 TRMV efficiency
-TrialJudgement(+8.01% => regression)
-
+TrialJudgement(-48.54% => improvement)
 
 =#
