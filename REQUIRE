@@ -2,4 +2,3 @@ EAGO 0.1.2
 Compat
 BenchmarkTools
 StaticArrays
-SparseArrays
