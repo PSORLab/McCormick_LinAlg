@@ -4,7 +4,7 @@ module EfficiencyTest
     using Compat.Test
     using BenchmarkTools
     import BenchmarkTools.minimum
-    using StaticArrays ,SparseArrays
+    using StaticArrays, SparseArrays
     using EAGO #Should be dependent in LinAlg So idk why MC not defined
     using McCormick_LinAlg
     using Random
