@@ -148,6 +148,8 @@ for i in 1:m #Make Symmetric (copy Upper to Lower)
         end
     end
 end
+
+
 bsymv = @benchmarkable SYMV($UPLO, $n, $alpha, $AS, $x, $beta, $y)
 bdssymv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, $y) #gemv is simple matrix mult,
 for b in [bsymv, bdssymv]                                                           #So it is benchmark for all special matrix forms
@@ -167,14 +169,34 @@ for i in 1:m #MAKE A a SPARSE BANDED HERE
         end
     end
 end
+
+MCrows = []
+MCcols = []
+ASs_ = []
+for i in 1:n
+       for j in 1:n
+       if AS[i,j] != MCzero
+           push!(ASs_, AS[i,j])
+           push!(MCrows, i)
+           push!(MCcols, j)
+       end
+    end
+end
+ASs = sparse(MCcols, MCrows, ASs_)
+ASs = SparseMatrixCSC{MC{3}, Int64}(ASs)
+
 ASu = sbandu(AS,m,n,k)
+
+bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ASs, $x, $beta, $y)
 bsbmv = @benchmarkable SBMV($UPLO, $n, $k, $alpha, $ASu, $x, $beta, $y)
 bdssbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, $y) #gemv is simple matrix mult,
 for b in [bsbmv, bdssbmv]                                                           #So it is benchmark for all special matrix forms
     tune!(b)
 end
-new, old = minimum(run(bsbmv)), minimum(run(bdssbmv))
+new, old , newsp= minimum(run(bsbmv)), minimum(run(bdssbmv)), minimum(run(bgbmvs))
 println(judge(new, old))
+println("Using Sparse Array")
+println(judge(newsp, old))
 
 #TRMV
 println("TRMV efficiency")
