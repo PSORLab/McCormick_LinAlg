@@ -1,7 +1,7 @@
 module McCormick_LinAlg
 
     using EAGO
-    export XSCAL, DOT, SAXPY, XNRM2, GEMV, GBMV, SYMV, SBMV, TRMV
+    export XSCAL, XSCAL!, DOT, SAXPY, XNRM2, GEMV, GBMV, GBMVs, SYMV, SBMV, TRMV
     export testcorrectness
     export testefficiency
 
