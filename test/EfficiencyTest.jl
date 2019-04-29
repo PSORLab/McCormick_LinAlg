@@ -30,11 +30,15 @@ module EfficiencyTest
 
     M = [m1,m2,m3,m4]
     Random.seed!(0);
-    n = 75 #Vector Size for all testing
+    n = 75 #Vector Size for general
     ind = rand(1:4, n*2)
     X = map(x -> M[x], ind[1:n])
     Y = map(x -> M[x], ind[n+1:2n])
 
+    ns = 1000 #Size for sparse systems
+    inds = rand(1:4, ns*2)
+    Xs = map(x -> M[x], ind[1:n])
+    Ys = map(x -> M[x], ind[n+1:2n])
 
 #DOT
     println("DOT efficiency")
@@ -78,7 +82,6 @@ module EfficiencyTest
     #GEMV
     println("GEMV efficiency")
 
-    M = [m1,m2,m3,m4];
     m = n;
     A = rand(M, m,n);
     x = rand(M, n);
@@ -95,13 +98,17 @@ module EfficiencyTest
     println(judge(new, old2))
 
 #GBVM
-    println("GBMV efficiency")
-    AB = copy(A)
-    kl = 5 #Efficiency is very dependednt on the bandwidth
-    ku = 4
-    MCzero = MC{4}(0.0,0.0)
-    for i in 1:m #MAKE A a SPARSE BANDED HERE
-        for j in 1:n
+    println("GBMV efficiency") #Recently increased dimensions on this test
+    ns =ms= 1000 #Size for sparse systems
+    inds = rand(1:4, ns*2)
+    AB = rand(M, ns,ns);
+    xs = rand(M, ns);
+    ys = rand(M, ns);
+    kl = 100 #Efficiency is very dependent on the bandwidth
+    ku = 100
+    MCzero = zero(MC{4})
+    for i in 1:ms #MAKE A a SPARSE BANDED HERE
+        for j in 1:ns
             if j<i-kl || j>i+ku
                 AB[i,j] = MCzero
             end
@@ -111,8 +118,8 @@ module EfficiencyTest
     MCrows = []
     MCcols = []
     ABs_ = []
-    for i in 1:n
-           for j in 1:n
+    for i in 1:ns
+           for j in 1:ns
            if AB[i,j] != MCzero
                push!(ABs_, AB[i,j])
                push!(MCrows, i)
@@ -122,12 +129,12 @@ module EfficiencyTest
     end
     ABs = sparse(MCcols, MCrows, ABs_)
     ABs = SparseMatrixCSC{MC{4}, Int64}(ABs)
-    ABg = band(AB,m,n,ku,kl)
+    ABg = band(AB,ms,ns,ku,kl)
 
-    bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ABs, $x, $beta, $y)
+    bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ABs, $xs, $beta, $ys)
     #bdsgbmvs = @benchmarkable deadsimplegbmvs($TRANS, $alpha, $ABs, $x, $beta, $y)
-    bgbmv = @benchmarkable GBMV($TRANS, $m, $n, $kl, $ku, $alpha, $ABg, $x, $beta, $y)
-    bdsgbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AB, $x, $beta, $y) #gemv is simple matrix mult,
+    bgbmv = @benchmarkable GBMV($TRANS, $ms, $ns, $kl, $ku, $alpha, $ABg, $xs, $beta, $ys)
+    bdsgbmv = @benchmarkable deadsimplegemv($TRANS, $ms, $ns, $alpha, $AB, $xs, $beta, $ys) #gemv is simple matrix mult,
     for b in [bgbmv, bdsgbmv, bgbmvs]#, bdsgbmvs]                                                           #So it is benchmark for all special matrix forms
         tune!(b)
     end
@@ -161,35 +168,36 @@ println(judge(new, old))
 #SBMV
 println("SBMV efficiency")
 DIAG = "N"
-k = 5
-for i in 1:m #MAKE A a SPARSE BANDED HERE
-    for j in 1:n
-        if j<i-k || j>i+k
-            AS[i,j] = MCzero
+k = 100 #1000x1000 matrix and k=100 is 81% sparse
+AB = copy(A_)
+for i in 1:ms #Make AB Symmetric (copy Upper to Lower). Bandwidth is same
+    for j in 1:ns
+        if j < i
+            AB[i,j] = AB[j,i]
         end
     end
 end
 
 MCrows = []
 MCcols = []
-ASs_ = []
-for i in 1:n
-       for j in 1:n
-       if AS[i,j] != MCzero
-           push!(ASs_, AS[i,j])
+ABs_ = []
+for i in 1:ns
+       for j in 1:ns
+       if AB[i,j] != MCzero
+           push!(ABs_, AB[i,j])
            push!(MCrows, i)
            push!(MCcols, j)
        end
     end
 end
-ASs = sparse(MCcols, MCrows, ASs_)
-ASs = SparseMatrixCSC{MC{4}, Int64}(ASs)
+ABs = sparse(MCcols, MCrows, ABs_)
+ABs = SparseMatrixCSC{MC{4}, Int64}(ABs)
 
-ASu = sbandu(AS,m,n,k)
+ABu = sbandu(AB,ms,ns,k)
 
-bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ASs, $x, $beta, $y)
-bsbmv = @benchmarkable SBMV($UPLO, $n, $k, $alpha, $ASu, $x, $beta, $y)
-bdssbmv = @benchmarkable deadsimplegemv($TRANS, $m, $n, $alpha, $AS, $x, $beta, $y) #gemv is simple matrix mult,
+bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ABs, $xs, $beta, $ys)
+bsbmv = @benchmarkable SBMV($UPLO, $ns, $k, $alpha, $ABu, $xs, $beta, $ys)
+bdssbmv = @benchmarkable deadsimplegemv($TRANS, $ms, $ns, $alpha, $AB, $xs, $beta, $ys) #gemv is simple matrix mult,
 for b in [bsbmv, bdssbmv]                                                           #So it is benchmark for all special matrix forms
     tune!(b)
 end
