@@ -15,7 +15,7 @@ n = 10
 m=n
 k = 2
 AFu = rand(M, m,n)
-MCzero = MC{3}(0.0,0.0)
+MCzero = zero(MC{3})
 AFl = copy(AFu)
 for i in 1:m #Make Upper Triangular
     for j in 1:n

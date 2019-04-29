@@ -15,7 +15,7 @@ Random.seed!(0)
 m = 10
 n = 10
 AF = rand(M, m,n)
-MCzero = MC{3}(0.0,0.0)
+MCzero = zero(MC{3})
 for i in 1:m #Make Symmetric (copy Upper to Lower)
     for j in 1:n
         if j < i

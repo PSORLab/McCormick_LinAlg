@@ -22,15 +22,15 @@ module EfficiencyTest
     include("SimpleFunctions/simplegemv.jl")
 
     include("../src/BLAS_MC/Lin_Functions/form.jl")
-    m1 = MC{3}(4.0, 5.0, IntervalType(4,7), SVector{3,Float64}(3.0, 2.0, 1.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
-    m2 = MC{3}(33.7,50.0,IntervalType(32,50),SVector{3,Float64}(64.0,8.0, 96.0),SVector{3,Float64}(54.0,3.6, 18.0),false)
-    m3 = MC{3}(4.0, 5.0, IntervalType(4, 5), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0),false)
-    m4 = MC{3}(3.0, 4.0, IntervalType(2, 8), SVector{3,Float64}(4.0, 5.0, 6.0), SVector{3,Float64}(3.0, 2.0, 1.0), false)
+    m1 = MC{4}(4.0, 5.0, IntervalType(4,7), SVector{4,Float64}(3.0, 2.0, 4.4, 1.0), SVector{4,Float64}(3.0, 2.0, 4.0, 1.0), false)
+    m2 = MC{4}(33.7,50.0,IntervalType(32,50),SVector{4,Float64}(64.0, 23.5, 8.0, 96.0),SVector{4,Float64}(54.0, 7.8, 3.6, 18.0),false)
+    m3 = MC{4}(4.0, 5.0, IntervalType(4, 5), SVector{4,Float64}(4.0, 5.0, 13.2, 6.0), SVector{4,Float64}(3.0, 2.0, 5.2, 1.0),false)
+    m4 = MC{4}(3.0, 4.0, IntervalType(2, 8), SVector{4,Float64}(4.0, 5.0, 7.0, 6.0), SVector{4,Float64}(3.0, 2.0, 2.5, 1.0), false)
     a = 6.3
 
     M = [m1,m2,m3,m4]
     Random.seed!(0);
-    n = 50 #Vector Size for all testing
+    n = 75 #Vector Size for all testing
     ind = rand(1:4, n*2)
     X = map(x -> M[x], ind[1:n])
     Y = map(x -> M[x], ind[n+1:2n])
@@ -99,7 +99,7 @@ module EfficiencyTest
     AB = copy(A)
     kl = 5 #Efficiency is very dependednt on the bandwidth
     ku = 4
-    MCzero = MC{3}(0.0,0.0)
+    MCzero = MC{4}(0.0,0.0)
     for i in 1:m #MAKE A a SPARSE BANDED HERE
         for j in 1:n
             if j<i-kl || j>i+ku
@@ -121,7 +121,7 @@ module EfficiencyTest
         end
     end
     ABs = sparse(MCcols, MCrows, ABs_)
-    ABs = SparseMatrixCSC{MC{3}, Int64}(ABs)
+    ABs = SparseMatrixCSC{MC{4}, Int64}(ABs)
     ABg = band(AB,m,n,ku,kl)
 
     bgbmvs = @benchmarkable GBMVs($TRANS, $alpha, $ABs, $x, $beta, $y)
@@ -161,10 +161,10 @@ println(judge(new, old))
 #SBMV
 println("SBMV efficiency")
 DIAG = "N"
-k = 2
+k = 5
 for i in 1:m #MAKE A a SPARSE BANDED HERE
     for j in 1:n
-        if j<i-kl || j>i+ku
+        if j<i-k || j>i+k
             AS[i,j] = MCzero
         end
     end
@@ -183,7 +183,7 @@ for i in 1:n
     end
 end
 ASs = sparse(MCcols, MCrows, ASs_)
-ASs = SparseMatrixCSC{MC{3}, Int64}(ASs)
+ASs = SparseMatrixCSC{MC{4}, Int64}(ASs)
 
 ASu = sbandu(AS,m,n,k)
 

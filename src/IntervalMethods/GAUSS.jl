@@ -6,22 +6,9 @@ function gaussdet(A) #From A NEW CRITERION TO GUARANTEE THE FEASIBILITY OF THE I
       A_k = copy(A)
       Intzero = Interval(0.0, 0.0)
       #Closer to paper's values
-      for k = 2:n
+      for k = 1:(n-1)
             for i = 1:n #Consider Pivot Tightening?
                   for j = 1:n#Assume A is nxn
-                        println("i: $i, j: $j, k: $k")
-                        cond1 = 1<=i<=k
-                        cond2 = 1<=j<=n
-                        cond3 = 1<=i<=k && 1<=j<=n
-                        cond4 = (k+1)<=i<=n
-                        cond5 = (k+1)<=j<=n
-                        cond6 = (k+1)<=i<=n && (k+1)<=j<=n
-                        println("cond1: $cond1")
-                        println("cond2: $cond2")
-                        println("cond3: $cond3")
-                        println("cond4: $cond4")
-                        println("cond5: $cond5")
-                        println("cond6: $cond6")
                         if 1<=i<=k && 1<=j<=n
                         elseif (k+1)<=i<=n && (k+1)<=j<=n
                               A_kplus1[i,j] = A_k[i,j] - (A_k[i,k]*A_k[k,j])/A_k[k,k]

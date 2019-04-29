@@ -17,7 +17,7 @@ m = 10
 n = 10
 k = 2
 AF = rand(M, m,n)
-MCzero = MC{3}(0.0,0.0)
+MCzero = zero(MC{3})
 for i in 1:m #MAKE A a symmetric SPARSE BANDED HERE
     for j in 1:n
         if j<i-k || j>i+k
