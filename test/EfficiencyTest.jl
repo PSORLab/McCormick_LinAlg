@@ -36,9 +36,6 @@ module EfficiencyTest
     Y = map(x -> M[x], ind[n+1:2n])
 
     ns = 1000 #Size for sparse systems
-    inds = rand(1:4, ns*2)
-    Xs = map(x -> M[x], ind[1:n])
-    Ys = map(x -> M[x], ind[n+1:2n])
 
 #DOT
     println("DOT efficiency")
@@ -169,7 +166,6 @@ println(judge(new, old))
 println("SBMV efficiency")
 DIAG = "N"
 k = 100 #1000x1000 matrix and k=100 is 81% sparse
-AB = copy(A_)
 for i in 1:ms #Make AB Symmetric (copy Upper to Lower). Bandwidth is same
     for j in 1:ns
         if j < i
