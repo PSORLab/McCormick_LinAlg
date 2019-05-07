@@ -29,6 +29,7 @@ function dualdiv(Inter1::Array{Interval,1}, Inter2::Interval)
       return Inter1 / dual(Inter2)
 end
 #Linear Solver using forward+back substitution
+      #Used by CRAMinv. Should make version that makes lower triangular to see if bounds on x[1] is different
 function solve(A_::Array{Interval{T},2},b_::Array{Interval{T},1}) where T<:Real #Solve Ax=b
       (n,m) = size(A_)
       A = copy(A_)

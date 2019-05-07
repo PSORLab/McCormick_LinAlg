@@ -3,7 +3,7 @@
 # by applying gaussian elimination following preconditioning
 using LinearAlgebra, IntervalArithmetic
 
-function gaussinvdet(A)
+function gaussinvdet(A::Array{Interval{Float64}, 2}) where N
       Intzero::Interval = Interval(0.0,0.0)
       (n,m) = size(A)
       Am = map(x->(x.lo+x.hi)/2, A)# Midpoint Matrix for preconditioning
@@ -33,7 +33,40 @@ function gaussinvdet(A)
       return detk
 end
 
-function gaussdinvdet(A)
+function gaussinvdet(A::Array{MC{N}, 2}) where N
+      Intzero::Interval = Interval(0.0,0.0)
+      B = map(x -> x.Intv, A)
+      (n,m) = size(A)
+      Am = map(x->(x.lo+x.hi)/2, B)# Midpoint Matrix for preconditioning
+      Am_inv = inv(Am)
+      detAm_inv = det(Am_inv)
+      A_k = Am_inv * B #Preconditioning step
+      A_kplus1 = copy(A_k)
+      #This way is closer to paper's values
+      for k = 1:(n-1) #From A NEW CRITERION TO GUARANTEE THE FEASIBILITY OF THE INTERVAL GAUSSIAN ALGORITHM*, A. FROMMERf AND G. MAYER
+            for i = 1:n
+                  for j = 1:n#Assume A is nxn
+                        if 1<=i<=k && 1<=j<=n
+                        elseif (k+1)<=i<=(k+n) && (k+1)<=j<=(k+n)
+                              A_kplus1[i,j] -= (A_k[i,k]*A_k[k,j])/A_k[k,k]
+                        else
+                              A_kplus1[i,j] = 0
+                        end
+                  end
+            end
+            A_k = A_kplus1
+      end
+      detk::Interval = A_k[1,1]
+      for i = 2:n
+            detk *= A_k[i,i]
+      end
+      detk = detk / detAm_inv
+      return detk
+end
+
+
+#Using alternative interval arithmetic, this version not used
+function gaussdinvdet(A::Array{Interval{Float64}, 2})
       Intzero::Interval = Interval(0.0,0.0)
       (n,m) = size(A)
       Am = map(x->(x.lo+x.hi)/2, A)# Midpoint Matrix for preconditioning
