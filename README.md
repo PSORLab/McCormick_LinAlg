@@ -9,4 +9,4 @@ McCormick_LinAlg is an auxillary library of linear algebra functions designed fo
 
 ## Status of Package
  * Majority of methods in the [**BLAS**](http://www.netlib.org/blas/#_optimized_blas_library) library up to TRMV are running.
- * Preconditioned Gaussian Elimination seems to be the most functional and accurate Interval Determinant Estimaion method
+ * Preconditioned Gaussian Elimination seems to be the most functional and accurate Interval Determinant Estimation method
